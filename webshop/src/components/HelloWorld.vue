@@ -1,6 +1,9 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1>{{product.name}}</h1>
+    <p>beskrivning</p>
+    <p>other details</p>
+
     <p>
       For a guide and recipes on how to configure / customize this project,<br>
       check out the
@@ -31,8 +34,19 @@
 </template>
 
 <script>
+const product = reactive({
+  name: '',
+  description: '',
+  price: 0
+})
 export default {
-  name: 'HelloWorld',
+  name: {
+    product: {
+      name: 'En grym produkt',
+      description: 'En perfekt produkt f r alla',
+      price: 99.99
+    }
+  },
   props: {
     msg: String
   }
