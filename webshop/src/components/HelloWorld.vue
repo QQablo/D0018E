@@ -7,6 +7,9 @@
       <p>Price: ${{ product.price }}</p>
     </div>
   </div>
+
+  <h1>HELLO</h1>
+  <img src="https://i.imgur.com/29dzclJ.jpg" alt="image of a white show with red stripes">
 </template>
 
 <script>
