@@ -1,6 +1,8 @@
 const express = require('express');
+const database = require('./postgresdb') 
 
 const app = express();
+database.GenericQuery("SELECT * FROM customers");
 const PORT = 3000;
 
 app.listen(PORT, (error) =>{
