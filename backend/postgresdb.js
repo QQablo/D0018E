@@ -4,13 +4,17 @@ const { Client } = pg
  
 const client = new Client({
   user: 'postgres',
-  password: 'password12345',
+  password: 'postgres',
   host: 'localhost',
-  port: 5334,
-  database: 'database-name',
+  port: 5333,
+  database: 'D0018ECOMMERCE',
 })
 
-await client.connect();
+const conn=await client.connect();
+
+if (conn) {
+  console.log('Connected to the database');
+}
 
 function GenericQuery(input) {
     result = client.query('SELECT $1::text', [input]);

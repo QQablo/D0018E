@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 import express from 'express';
 import { db } from './postgresdb.js';
+=======
+const express = require('express');
+const database = require('./postgresdb') 
+>>>>>>> d35268a7bed55c0a112a1ced41b81209f1acabfb
 
 const app = express();
+database.GenericQuery("SELECT * FROM customers");
 const PORT = 3000;
 
 
