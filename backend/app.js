@@ -1,7 +1,10 @@
-const express = require('express');
+import express from 'express';
+import { db } from './postgresdb.js';
 
 const app = express();
 const PORT = 3000;
+
+
 
 app.listen(PORT, (error) =>{
     if(!error){
