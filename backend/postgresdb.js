@@ -1,4 +1,4 @@
-const pg = require('pg');
+import pg from 'pg';
 
 const { Client } = pg
  
@@ -16,7 +16,10 @@ if (conn) {
   console.log('Connected to the database');
 }
 
-exports.GenericQuery = (input) => {
+function GenericQuery(input) {
     result = client.query('SELECT $1::text', [input]);
     return result;
 }
+
+//Viktigt: den här kastar en error eftersom filen inte är kopplad till en riktig databas än
+export { GenericQuery as db};
