@@ -4,18 +4,18 @@
       <h1>Welcome to Our Webshop</h1>
     </header>
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld :products="products" />
+    <ProductList :products="products" />
   </div>
 </template>
 
 <script>
 import { reactive } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import ProductList from './components/ProductList.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    ProductList
   },
   setup() {
     const products = reactive([
