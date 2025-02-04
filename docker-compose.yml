@@ -11,16 +11,16 @@ services:
     ports:
       - 5430:5432 # Port binding to connect with pgadmin
 
-  # backend:
-  #   build: ./backend
-  #   container_name: backend
-  #   environment:
-  #     POSTGRES_USER: student
-  #     POSTGRES_PASSWORD: student
-  #     POSTGRES_HOST: db
-  #     POSTGRES_DB: d0018e
-  #     POSTGRES_PORT: 5432 # Within docker the port binding is not necessary
-  #   depends_on:
-  #     - db
-  #   ports:
-  #   - 3000:3000
+  backend:
+    build: ./backend
+    container_name: backend
+    environment:
+      POSTGRES_USER: student
+      POSTGRES_PASSWORD: student
+      POSTGRES_HOST: db
+      POSTGRES_DB: d0018e
+      POSTGRES_PORT: 5432 # Within docker the port binding is not necessary
+    depends_on:
+      - db
+    ports:
+    - 3000:3000
