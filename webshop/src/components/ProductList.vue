@@ -1,20 +1,17 @@
 <template>
   <div class="products">
     <div v-for="(product, index) in products" :key="index" class="product-card">
-      <img :src="require('../assets/Shoes/' + product.image)" :alt="product.name" class="product-image" />
+      <img :src="product.image" :alt="product.name" class="product-image" />
       <h2>{{ product.name }}</h2>
       <p>{{ product.description }}</p>
       <p>Price: ${{ product.price }}</p>
     </div>
   </div>
-
-  <h1>HELLO</h1>
-  <img src="https://i.imgur.com/29dzclJ.jpg" alt="image of a white show with red stripes">
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: 'ProductList',
   props: {
     products: Array
   }

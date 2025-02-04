@@ -1,32 +1,36 @@
 <template>
   <div>
-    <HelloWorld :products="products" />
+    <header class="header">
+      <h1>Welcome to Our Webshop</h1>
+    </header>
+    <img alt="Vue logo" src="./assets/logo.png">
+    <ProductList :products="products" />
   </div>
 </template>
 
 <script>
 import { reactive } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import ProductList from './components/ProductList.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    ProductList
   },
   setup() {
     const products = reactive([
-    { image: 'Adidas_Samba.jpg', name: 'Adidas Samba', description: 'Adidas', price: 69.99 },
-      { image: 'BOSS_Sienne.jpg', name: 'BOSS Sienne', description: 'BOSS', price: 59.99 },
-      { image: 'DIOR_Boy.jpg', name: 'DIOR Boy', description: 'DIOR', price: 99.99 },
-      { image: 'DIOR_Timeless.jpg', name: 'DIOR Timeless', description: 'DIOR', price: 79.99 },
-      { image: 'Doc-Martens_1460.jpg', name: 'Doc-Martens 1460', description: 'Doc Martens 1460', price: 99.99 },
-      { image: 'ECCO_Melbourne.jpg', name: 'ECCO Melbourne', description: 'ECCO', price: 119.99 },
-      { image: 'GANT_Wilmon.jpg', name: 'GANT Wilmon', description: 'GANT', price: 19.99 },
-      { image: 'Jack_Jones_Jfwadam.jpg', name: 'Jack & Jones Jfwadam', description: 'Jack & Jones', price: 59.99 },
-      { image: 'Nike_Air_Force_1.jpg', name: 'Nike Air Force 1', description: 'Nike', price: 89.99 },
-      { image: 'Nike_Lunar_Force.jpg', name: 'Nike Lunar Force', description: 'Nike', price: 69.99 },
-      { image: 'Pier_One_Eleganta.jpg', name: 'Pier One Eleganta', description: 'Pier One', price: 99.99 },
-      { image: 'Timberlands_6.jpg', name: 'Timberlands 6', description: 'Timberlands', price: 79.99 }
+    { image: 'https://i.imgur.com/gQgKIo9.jpeg', name: 'Adidas Samba', description: 'Adidas', price: 69.99 },
+    { image: 'https://i.imgur.com/u9mP87O.jpeg', name: 'Nike Air Force 1', description: 'Nike', price: 89.99 },
+      { image: 'https://i.imgur.com/Kby3OB5.jpeg', name: 'Nike Lunar Force', description: 'Nike', price: 69.99 },
+      { image: 'https://i.imgur.com/XrTBCyq.jpeg', name: 'BOSS Sienne', description: 'BOSS', price: 59.99 },
+      { image: 'https://i.imgur.com/u5Np6pK.jpeg', name: 'DIOR Boy', description: 'DIOR', price: 99.99 },
+      { image: 'https://i.imgur.com/9nH5sM0.jpeg', name: 'GANT Wilmon', description: 'GANT', price: 19.99 },
+      { image: 'https://i.imgur.com/rF8i3Qg.jpeg', name: 'ECCO Melbourne', description: 'ECCO', price: 119.99 },
+      { image: 'https://i.imgur.com/Tp5bSfQ.jpeg', name: 'DIOR Timeless', description: 'DIOR', price: 79.99 },
+      { image: 'https://i.imgur.com/d9RG5lx.jpeg', name: 'Pier One Eleganta', description: 'Pier One', price: 99.99 },
+      { image: 'https://i.imgur.com/xsoTkVE.jpeg', name: 'Jack & Jones Jfwadam', description: 'Jack & Jones', price: 59.99 },
+      { image: 'https://i.imgur.com/WkhfN1R.jpeg', name: 'Doc-Martens 1460', description: 'Doc Martens 1460', price: 99.99 },
+      { image: 'https://i.imgur.com/ssZDa6M.jpeg', name: 'Timberlands 6', description: 'Timberlands', price: 79.99 }
     ]);
 
     return { products };
