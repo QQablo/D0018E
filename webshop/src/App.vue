@@ -39,11 +39,4 @@ export default {
 </script>
 
 <style>
-.header {
-  text-align: center;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  font-size: 24px;
-}
 </style>
