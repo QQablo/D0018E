@@ -1,0 +1,4 @@
+pgdata/
+
+# local env files
+.env
