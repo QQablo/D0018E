@@ -1,9 +1,5 @@
 <template>
   <div>
-    <header class="header">
-      <h1>Welcome to Our Webshop</h1>
-    </header>
-    <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld :products="products" />
   </div>
 </template>
@@ -39,11 +35,4 @@ export default {
 </script>
 
 <style>
-.header {
-  text-align: center;
-  background-color: #2c3e50;
-  color: white;
-  padding: 20px;
-  font-size: 24px;
-}
 </style>
