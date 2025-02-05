@@ -5,10 +5,50 @@
       <form @submit.prevent="signup" class="form-container">
         <div class="input-group">
           <input
+            type="text"
+            id="firstName"
+            v-model="firstName"
+            placeholder="First Name"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <input
+            type="text"
+            id="lastName"
+            v-model="lastName"
+            placeholder="Last Name"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <input
             type="email"
             id="email"
             v-model="email"
             placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <input
+            type="tel"
+            id="phone"
+            v-model="phone"
+            placeholder="Phone Number"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <input
+            type="text"
+            id="address"
+            v-model="address"
+            placeholder="Address"
             required
           />
         </div>
@@ -44,20 +84,29 @@
   export default {
     data() {
       return {
+        firstName: '',
+        lastName: '',
         email: '',
+        phone: '',
+        address: '',
         password: '',
         confirmPassword: '',
       };
     },
     methods: {
       signup() {
-        console.log('Signing up with:', this.email, this.password, this.confirmPassword);
-  
+        if (!this.firstName || !this.lastName || !this.email || !this.phone || !this.address || !this.password || !this.confirmPassword) {
+          alert('Please fill in all fields');
+          return;
+        }
+
         if (this.password !== this.confirmPassword) {
           alert('Passwords do not match');
           return;
         }
-  
+
+        console.log('Signing up with:', this.firstName, this.lastName, this.email, this.phone, this.address, this.password);
+        
       },
     },
   };
@@ -86,15 +135,9 @@
   }
   
   .input-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
-  
-  .input-group label {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-  }
-  
+
   .input-group input {
     padding: 10px;
     font-size: 16px;
@@ -103,7 +146,7 @@
     border-radius: 4px;
     box-sizing: border-box;
   }
-  
+
   button {
     padding: 12px;
     background-color: #28a745;
