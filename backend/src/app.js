@@ -14,7 +14,8 @@ app.use(session({
   // Don't save the session if it hasn't been modified
   resave: false,
   cookie: { 
-    maxAge: 60000 * 60 
+    maxAge: 60000 * 60,
+    
   }
 }));
 

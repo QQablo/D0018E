@@ -40,7 +40,6 @@ router.post('/customer_sign_up', async(req, res) => {
 });
 
 
-// Återstår att fixa session och vagn grejer
 router.post('/sign_in', async(req, res) => {
     try {
         const {email, password} = req.body;
@@ -59,6 +58,18 @@ router.post('/sign_in', async(req, res) => {
                 if (!isPasswordValid) { 
                     return res.status(400).json({error: 'Password is invalid.'});
                 } else {
+                    // if cart is not empty
+                    // use customer id to check if it has a cart already in the database, 
+                    // if not, create one
+                    // 
+                    // if it has a cart already, use it
+                    // 
+                    req.session.user = {
+                                id: user.user_id, 
+                                email: user.email, 
+                                role: user.user_role
+                            };
+                    // Koppla eventuell anonym session och vagn till den inloggade.
                     return res.status(200).json({message: 'User logged in successfully.'});
                 }
             }
