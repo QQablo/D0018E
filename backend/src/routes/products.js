@@ -4,7 +4,7 @@ const pool = require('../config/db');
 const router = express.Router();
 
 
-router.get('/products', async(req, res) => {
+router.get('/products', async(res) => {
     try{
       const {rows} = await pool.query(
           'SELECT  p.product_id, p.name, p.price, p.description, p.image ' +
@@ -55,6 +55,21 @@ router.get('/product', async(req, res) => {
     } catch (err) {
       console.error(err.message);
       return res.status(500).json({error: 'Something went wrong while retrieving the product.'})
+    }
+});
+
+router.delete('/delete_product', async(req, res) => {
+    try{
+      const {rows} = await pool.query(
+          'DELETE FROM products WHERE product_id=$1', [req.query.id]); 
+      if (rows.length > 0) { 
+          return res.status(200).json({message:"Product deleted successfully."});
+      } else {
+          return res.status(404).json({error: 'Product not found, invalid id.'})
+      }
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({error: 'Something went wrong while deleting the product.'})
     }
 });
 
