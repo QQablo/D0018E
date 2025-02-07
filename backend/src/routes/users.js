@@ -19,18 +19,17 @@ router.post('/customer_sign_up', async(req, res) => {
                 return res.status(400).json({message: 'Email already in use.' });
             } else{ // Basic validation completed -> Hash the password and register the user.
                 const hashedPassword = await bcrypt.hash(password, 10);
-                console.log(hashedPassword)
+                //console.log(hashedPassword)
                 const result = await pool.query(
                     'INSERT INTO users (first_name, last_name, email, address, phone, passwrd, user_role) ' +
                     'VALUES ($1, $2, $3, $4, $5, $6, $7)', 
                     [first_name, last_name, email, address, phone, hashedPassword, 'customer']
                 )
-                if (result.rowCount === 0) { // Something went wrong with the insert.
-                    return res.status(500).json({error: 'Something went wrong while creating the customer account.'})
+                if (result.length > 0) { 
+                    return res.status(201).json({error: 'Account created successfully.'})
                 }
-                
                 //console.log(result)
-                return res.status(200).json({message:"Customer registered sucessfully."});
+                return res.status(500).json({error: 'Something went wrong while creating the customer account.'})
             }
         }
     } catch (err){
@@ -40,7 +39,8 @@ router.post('/customer_sign_up', async(req, res) => {
 });
 
 
-router.post('/sign_in', async(req, res) => {
+// NEED UPDATE FOR CART AND SESSIONS
+router.post('/login', async(req, res) => {
     try {
         const {email, password} = req.body;
 
@@ -69,8 +69,7 @@ router.post('/sign_in', async(req, res) => {
                                 email: user.email, 
                                 role: user.user_role
                             };
-                    // Koppla eventuell anonym session och vagn till den inloggade.
-                    return res.status(200).json({message: 'User logged in successfully.'});
+                    return res.status(200).json({message: 'User signed in successfully.'});
                 }
             }
         }

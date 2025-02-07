@@ -24,16 +24,6 @@ app.use(session({
 app.use(routes);
 
 
-// // Test
-// app.get('/', async(req, res) => {
-//   try{
-//     const {rows} = await pool.query('SELECT * FROM product');
-//     res.json(rows);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
-// });
-
 
 const PORT = process.env.SERVER_PORT || 3000;
 app.listen(PORT, (error) =>{
