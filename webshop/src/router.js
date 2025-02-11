@@ -6,11 +6,26 @@ import CategoriesList from "./pages/CategoriesList.vue";
 import CategoryProducts from "./pages/CategoryProducts.vue";
 
 const routes = [
-    { path: '/', component: HomePage },
-    { path: '/login', component: LoginPage },
-    { path: '/signup', component: SignupPage },
-    { path: '/Categories', component: CategoriesList },
-    { path: '/category/:id', component: CategoryProducts },
+    { 
+        path: '/', 
+        component: HomePage 
+    },
+    { 
+        path: '/login', 
+        component: LoginPage 
+    },
+    { 
+        path: '/signup', 
+        component: SignupPage 
+    },
+    { 
+        path: '/categories', 
+        component: CategoriesList 
+    },
+    { 
+        path: '/category/:id', 
+        component: CategoryProducts 
+    },
 ];
 
 const router = createRouter({
