@@ -13,10 +13,11 @@ router.get('/products', async(res) => {
       if (rows.length > 0) { 
           return res.status(200).json({message:"Products retrieved successfully.", data: rows});
       } else {
-          return res.status(404).json({error: 'Products not found.'})
+          return res.status(404).json({error: 'Products not found.'});
       }
     } catch (err) {
       console.error(err.message);
+      return res.status(500).json({error: 'Something went wrong while retrieving the products.'})
     }
   });
 
@@ -32,10 +33,11 @@ router.get('/category_products', async(req, res) => {
     if (rows.length > 0) { 
         return res.status(200).json({message:"Products retrieved successfully.", data:rows});
     } else {
-        return res.status(404).json({error: 'Products not found.'})
+        return res.status(404).json({error: 'Products not found.'});
     }
   } catch (err) {
     console.error(err.message);
+    return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
   }
 });
 
@@ -50,14 +52,18 @@ router.get('/product', async(req, res) => {
       if (rows.length > 0) { 
           return res.status(200).json({message:"Product retrieved successfully.", data: rows});
       } else {
-          return res.status(404).json({error: 'Product not found.'})
+          return res.status(404).json({error: 'Product not found.'});
       }
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the product.'})
+      return res.status(500).json({error: 'Something went wrong while retrieving the product.'});
     }
 });
 
+
+
+
+// ADMINISTRATIVE functionalities -> Admin auth not implemented, yet.
 router.delete('/delete_product', async(req, res) => {
     try{
       const {rows} = await pool.query(
@@ -73,7 +79,27 @@ router.delete('/delete_product', async(req, res) => {
     }
 });
 
+ 
+router.post('/create_product', async(req, res) => {
+  const { name, price, description, image } = req.body
+  try{
+    const {rows} = await pool.query(
+        'INSERT INTO products (name, price, description, image)' + 
+        'VALUES ($1, $2, $3, $4) RETURNING product_id', [name, price, description, image]); 
+    //console.log(rows);
+    if (rows.length > 0) { 
+        return res.status(200).json({message:"Product created successfully."});
+    } else {
+        return res.status(404).json({error: 'Successful operation, but the product id was not returned.'})
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({error: 'Something went wrong while creating the product.'})
+  }
+});
 
+// update product
+  // set product category
 
 
 module.exports = router;

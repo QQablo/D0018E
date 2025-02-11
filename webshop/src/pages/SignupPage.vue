@@ -7,7 +7,7 @@
           <input
             type="text"
             id="firstName"
-            v-model="firstName"
+            v-model="formData.firstName"
             placeholder="First Name"
             required
           />
@@ -17,7 +17,7 @@
           <input
             type="text"
             id="lastName"
-            v-model="lastName"
+            v-model="formData.lastName"
             placeholder="Last Name"
             required
           />
@@ -27,7 +27,7 @@
           <input
             type="email"
             id="email"
-            v-model="email"
+            v-model="formData.email"
             placeholder="Enter your email"
             required
           />
@@ -37,7 +37,7 @@
           <input
             type="tel"
             id="phone"
-            v-model="phone"
+            v-model="formData.phone"
             placeholder="Phone Number"
             required
           />
@@ -47,7 +47,7 @@
           <input
             type="text"
             id="address"
-            v-model="address"
+            v-model="formData.address"
             placeholder="Address"
             required
           />
@@ -57,7 +57,7 @@
           <input
             type="password"
             id="password"
-            v-model="password"
+            v-model="formData.password"
             placeholder="Enter your password"
             required
           />
@@ -67,7 +67,7 @@
           <input
             type="password"
             id="confirmPassword"
-            v-model="confirmPassword"
+            v-model="formData.confirmPassword"
             placeholder="Confirm your password"
             required
           />
@@ -80,39 +80,39 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        address: '',
-        password: '',
-        confirmPassword: '',
-      };
-    },
-    methods: {
-      signup() {
-        if (!this.firstName || !this.lastName || !this.email || !this.phone || !this.address || !this.password || !this.confirmPassword) {
-          alert('Please fill in all fields');
-          return;
-        }
+<script setup>
+import axios from 'axios';
+import {reactive} from 'vue';
 
-        if (this.password !== this.confirmPassword) {
-          alert('Passwords do not match');
-          return;
-        }
-
-        console.log('Signing up with:', this.firstName, this.lastName, this.email, this.phone, this.address, this.password);
+const formData = reactive ({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  password: '',
+  confirmPassword: '',
+});
         
-      },
-    },
-  };
-  </script>
+const signup = async () => {
+    console.log(formData)
+    if (!formData.firstName || !formData.lastName || !formData.email ||  !formData.phone || !formData.address || !formData.password || !formData.confirmPassword) {
+      alert('Please fill in all fields');
+      return;
+    }
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    
+    //console.log('Signing up with:', formData.firstName, formData.lastName, formData.email, formData.phone, formData.address, formData.password);
+    const response = await axios.post('http://localhost:3000/api/user/sign_up', formData);
+    console.log(response)
+    
+}
+</script>
   
-  <style scoped>
+<style scoped>
   .signup-page {
     max-width: 400px;
     margin: 50px auto;
