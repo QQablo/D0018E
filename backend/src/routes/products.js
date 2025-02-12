@@ -4,20 +4,21 @@ const pool = require('../config/db');
 const router = express.Router();
 
 
-router.get('/products', async(res) => {
+router.get('/products', async(req, res) => {
     try{
       const {rows} = await pool.query(
           'SELECT  p.product_id, p.name, p.price, p.description, p.image ' +
               'FROM products p');
       //console.log(rows)
       if (rows.length > 0) { 
-          return res.status(200).json({message:"Products retrieved successfully.", data: rows});
+            return res.status(200).json({message:"Products retrieved successfully.", data: rows});
+            
       } else {
-          return res.status(404).json({error: 'Products not found.'});
+            return res.status(404).json({error: 'Products not found.'});
       }
     } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the products.'})
+        console.error(err.message);    
+        return res.status(500).json({error: 'Something went wrong while retrieving the products.'})
     }
   });
 
