@@ -12,7 +12,10 @@ app.use(cors({
     origin: 'http://localhost:8080' // Allow requests from this origin
   }
 )); 
+
+
 app.use(session({
+  name: "express-session",
   secret: 'D0018E - Databasteknik',
   // Don't save empty sessions in the session store, i.e., when users don't do anything on the site
   saveUninitialized: false ,

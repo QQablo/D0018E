@@ -7,6 +7,7 @@ import CategoryProducts from "./pages/CategoryProducts.vue";
 
 const routes = [
     { 
+        name: 'homepage',
         path: '/', 
         component: HomePage 
     },
