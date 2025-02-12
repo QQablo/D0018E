@@ -21,6 +21,22 @@ router.get('/products', async(res) => {
     }
   });
 
+  router.get('/categories', async(req, res) => {
+    try{
+      const {rows} = await pool.query(
+          'SELECT name, category_id FROM categories');
+      //console.log(rows)
+      if (rows.length > 0) { 
+          return res.status(200).json(rows);
+      } else {
+          return res.status(404).json({error: 'Products not found.'});
+      }
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
+    }
+  });
+
 router.get('/category_products', async(req, res) => {
   try{
     const {rows} = await pool.query(
@@ -28,7 +44,7 @@ router.get('/category_products', async(req, res) => {
             'FROM products p ' +
             'INNER JOIN product_categories pc ON p.product_id=pc.product_id ' +
             'INNER JOIN categories c ON pc.category_id = c.category_id ' + 
-            'WHERE c.name=$1', [req.query.category]);
+            'WHERE c.id=$1', [req.query.category]);
     //console.log(rows)
     if (rows.length > 0) { 
         return res.status(200).json({message:"Products retrieved successfully.", data:rows});
