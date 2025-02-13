@@ -20,6 +20,7 @@ router.post('/sign_up', async(req, res) => {
                 const hashedPassword = await bcrypt.hash(password, 10);
                 //console.log(hashedPassword)
                 const result = await pool.query(
+                    // Parameterized queries prevent sql injections.
                     'INSERT INTO users (first_name, last_name, email, address, phone, passwrd, user_role) ' +
                     'VALUES ($1, $2, $3, $4, $5, $6, $7)', 
                     [firstName, lastName, email, address, phone, hashedPassword, 'customer']
@@ -49,9 +50,11 @@ router.post('/login', async(req, res) => {
         if (!email || !password) { 
             return res.status(400).json({ error: 'All fields must be provided.' });
         } else {
-            const {rows} = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
-
+            const {rows} = await pool.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=$1', [email]);
+            //console.log(rows);
+            
             if (rows.length === 0) { 
+                
                 return res.status(400).json({error: 'Email not found.'});
             } else {
                 const user = rows[0];
@@ -60,17 +63,16 @@ router.post('/login', async(req, res) => {
                 if (!isPasswordValid) { 
                     return res.status(400).json({error: 'Password is invalid.'});
                 } else {
-                    // if cart is not empty
-                    // use customer id to check if it has a cart already in the database, 
-                    // if not, create one
-                    // 
-                    // if it has a cart already, use it
-                    // 
                     req.session.user = {
                                 id: user.user_id, 
                                 email: user.email, 
                                 role: user.user_role
                             };
+
+                    // if cart is not empty
+                    // use customer id to check if it has a cart already in the database, 
+                    // if not, connect the anonymous one to logged in user 
+                    // else delete it and load the one stored in the db
                     return res.status(200).json({message: 'User signed in successfully.'});
                 }
             }
@@ -79,6 +81,12 @@ router.post('/login', async(req, res) => {
         console.log(err)
         return res.status(500).json({error: 'Something went wrong while signing in.'})
     }
+});
+
+
+router.get('/logout', async (req, res) => {
+    req.session.destroy();
+    console.log("Session destroyed.")
 });
 
 module.exports = router;

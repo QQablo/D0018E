@@ -3,7 +3,7 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
-
+// Returns all the items in the products table.
 router.get('/products', async(req, res) => {
     try{
       const {rows} = await pool.query(
@@ -11,8 +11,8 @@ router.get('/products', async(req, res) => {
               'FROM products p');
       //console.log(rows)
       if (rows.length > 0) { 
+            console.log(req.session);
             return res.status(200).json({message:"Products retrieved successfully.", data: rows});
-            
       } else {
             return res.status(404).json({error: 'Products not found.'});
       }
@@ -22,7 +22,8 @@ router.get('/products', async(req, res) => {
     }
   });
 
-  router.get('/categories', async(req, res) => {
+// Return the id and name for all the categories.
+router.get('/categories', async(req, res) => {
     try{
       const {rows} = await pool.query(
           'SELECT name, category_id FROM categories');
@@ -38,6 +39,8 @@ router.get('/products', async(req, res) => {
     }
   });
 
+// Input: a "category_id"
+// Output: items the respective category. 
 router.get('/category_products', async(req, res) => {
   try{
     const {rows} = await pool.query(
@@ -45,7 +48,7 @@ router.get('/category_products', async(req, res) => {
             'FROM products p ' +
             'INNER JOIN product_categories pc ON p.product_id=pc.product_id ' +
             'INNER JOIN categories c ON pc.category_id = c.category_id ' + 
-            'WHERE c.id=$1', [req.query.category]);
+            'WHERE c.category_id=$1', [req.query.category_id]);
     //console.log(rows)
     if (rows.length > 0) { 
         return res.status(200).json({message:"Products retrieved successfully.", data:rows});
@@ -58,7 +61,8 @@ router.get('/category_products', async(req, res) => {
   }
 });
 
-
+// Input: the product "id"
+// Ouput: the product respective data
 router.get('/product', async(req, res) => {
     try{
       const {rows} = await pool.query(
