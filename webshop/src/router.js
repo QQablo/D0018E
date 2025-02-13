@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage.vue";
 import SignupPage from "./pages/SignupPage.vue";
 import CategoriesList from "./pages/CategoriesList.vue";
 import CategoryProducts from "./pages/CategoryProducts.vue";
+import CartPage from "./pages/CartPage.vue";
 
 const routes = [
     { 
@@ -25,6 +26,9 @@ const routes = [
     { 
         path: '/category/:id', 
         component: CategoryProducts 
+    },
+    {   path: '/cart', 
+        component: CartPage 
     },
 ];
 

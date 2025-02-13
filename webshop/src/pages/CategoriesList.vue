@@ -30,7 +30,7 @@ const fetchCategories = async () => {
     //console.log(categoriesData.value);
 
   } catch (error) {
-    console.error("Something went wrong while fetching products:", error);
+    console.error("Something went wrong while fetching categories:", error);
   }
 };
 

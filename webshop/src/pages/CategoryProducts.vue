@@ -17,7 +17,7 @@
 import {onMounted } from "vue";
 import axios from "axios";
 
-// const categoryData = reactive({
+// const categoryData = ref({
 //   name: "Category",
 //   products: []
 // });
@@ -51,3 +51,21 @@ onMounted(() => {
   products();
 });
 </script>
+
+<!--const products = async (categoryId) => {
+  try {
+    const categoryResponse = await axios.get(`http://localhost:3000/api/categories/${categoryId}`);
+    categoryData.value.name = categoryResponse.data.name;
+
+    const productResponse = await axios.get(`http://localhost:3000/api/products?category=${categoryId}`);
+    categoryData.value.products = productResponse.data;
+  } catch (error) {
+    console.error("Error fetching category and products:", error);
+  }
+};
+
+onMounted(() => {
+  const categoryId = window.location.pathname.split('/').pop(); 
+  products(categoryId);
+});-->
+
