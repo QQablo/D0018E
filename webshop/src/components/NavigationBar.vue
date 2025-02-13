@@ -5,7 +5,7 @@
         <li><router-link to="/login">Login</router-link></li>
         <li><router-link to="/signup">Signup</router-link></li>
         <li><router-link to="/Categories">Categories</router-link></li>
-        <li><router-link to="/cart">Cart🛍️ ({{ cartCount }})</router-link></li>
+        <!-- <li><router-link to="/cart">Cart🛍️ ({{ cartCount }})</router-link></li> -->
         <!--<li><router-link to="/cart" class="cart-link">
           <img src="https://i.imgur.com/3an99ic.png" class="cart-icon" />
            ({{ cartCount }})
