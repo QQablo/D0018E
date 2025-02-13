@@ -51,6 +51,7 @@ const login = async () => {
     const response = await axios.post('http://localhost:3000/api/user/login', credentials);
     //console.log(response);
     if(response.status == 200){
+        //  TODO: MIGHT NEED TO UPDATE THE CART 
         console.log("Successful login.");
         router.push({ name: 'homepage' });
     } 
