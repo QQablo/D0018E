@@ -3,6 +3,27 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
+
+// Returns all the sizes for a product
+router.get('/product_sizes', async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      'SELECT s.size_id, s.size ' +
+        'FROM sizes s ' + 
+        'INNER JOIN product_sizes ps ON s.size_id = ps.size_id ' + 
+        'WHERE ps.product_id = $1', [req.query.product_id]);
+    if (rows.length > 0) {
+      return res.status(200).json({ message: "Sizes retrieved successfully", data: rows });
+    } else {
+      return res.status(404).json({ error: 'sizes not found for this product.' });
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: 'Something went wrong while retrieving the sizes.' });
+  }
+});
+
+
 // Returns all the items in the products table.
 router.get('/products', async(req, res) => {
     try{
