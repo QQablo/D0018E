@@ -51,7 +51,7 @@ router.get('/category_products', async(req, res) => {
             'WHERE c.category_id=$1', [req.query.category_id]);
     //console.log(rows)
     if (rows.length > 0) { 
-      console.log("Products retrieved successfully.");
+        console.log("Products retrieved successfully.");
         return res.status(200).json(rows);
     } else {
         return res.status(404).json({error: 'Products not found.'});

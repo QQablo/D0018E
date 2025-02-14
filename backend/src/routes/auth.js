@@ -54,7 +54,6 @@ router.post('/login', async(req, res) => {
             //console.log(rows);
             
             if (rows.length === 0) { 
-                
                 return res.status(400).json({error: 'Email not found.'});
             } else {
                 const user = rows[0];
