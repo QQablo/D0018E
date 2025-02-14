@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from './router';
+import router from './config/router';
 import './config/axios.js';
 
 const app = createApp(App);

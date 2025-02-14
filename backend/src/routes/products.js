@@ -60,7 +60,7 @@ router.get('/categories', async(req, res) => {
     }
   });
 
-// Input: a "category_id"
+// Input: category_id
 // Output: items the respective category. 
 router.get('/category_products', async(req, res) => {
   try{
@@ -78,8 +78,8 @@ router.get('/category_products', async(req, res) => {
         return res.status(404).json({error: 'Products not found.'});
     }
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
+      console.error(err.message);
+      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
   }
 });
 
@@ -88,14 +88,13 @@ router.get('/category_products', async(req, res) => {
 router.get('/product', async(req, res) => {
     try{
       const {rows} = await pool.query(
-          'SELECT  p.product_id, p.name, p.price, p.description, p.image '+
-              'FROM products p ' +
-              'WHERE p.product_id=$1', [req.query.id]);
+            'SELECT  p.product_id, p.name, p.price, p.description, p.image '+
+            'FROM products p WHERE p.product_id=$1', [req.query.id]);
       //console.log(rows)
       if (rows.length > 0) { 
-          return res.status(200).json({message:"Product retrieved successfully.", data: rows});
+            return res.status(200).json({message:"Product retrieved successfully.", data: rows});
       } else {
-          return res.status(404).json({error: 'Product not found.'});
+            return res.status(404).json({error: 'Product not found.'});
       }
     } catch (err) {
       console.error(err.message);

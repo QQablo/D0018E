@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "./pages/HomePage.vue";
-import LoginPage from "./pages/LoginPage.vue";
-import SignupPage from "./pages/SignupPage.vue";
-import CategoriesList from "./pages/CategoriesList.vue";
-import CategoryProducts from "./pages/CategoryProducts.vue";
-import ProductPage from "./pages/ProductPage.vue";
-import CartPage from "./pages/CartPage.vue";
+import HomePage from "../pages/HomePage.vue";
+import LoginPage from "../pages/LoginPage.vue";
+import SignupPage from "../pages/SignupPage.vue";
+import CategoriesList from "../pages/CategoriesList.vue";
+import CategoryProducts from "../pages/CategoryProducts.vue";
+import ProductPage from "../pages/ProductPage.vue";
+import CartPage from "../pages/CartPage.vue";
 
 const routes = [
     { 

@@ -50,7 +50,7 @@ router.post('/login', async(req, res) => {
         if (!email || !password) { 
             return res.status(400).json({ error: 'All fields must be provided.' });
         } else {
-            const {rows} = await pool.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=$1', [email]);
+            const {rows} = await pool.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=1$', [email]);
             //console.log(rows);
             
             if (rows.length === 0) { 
@@ -63,11 +63,10 @@ router.post('/login', async(req, res) => {
                     return res.status(400).json({error: 'Password is invalid.'});
                 } else {
                     req.session.user = {
-                                id: user.user_id, 
-                                email: user.email, 
-                                role: user.user_role
-                            };
-
+                        id: user.user_id, 
+                        email: user.email, 
+                        role: user.user_role
+                    };
                     // if cart is not empty
                     // use customer id to check if it has a cart already in the database, 
                     // if not, connect the anonymous one to logged in user 
