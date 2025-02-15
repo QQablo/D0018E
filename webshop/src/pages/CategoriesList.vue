@@ -1,4 +1,5 @@
 <template>
+  <NavigationBar />
   <div>
     <h1>Categories</h1>
     <div v-for="category in categoriesData" :key="category.id">
@@ -12,8 +13,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import NavigationBar from '@/components/NavigationBar.vue';
 
 const categoriesData = ref([]);
+
 
 const fetchCategories = async () => {
   try {

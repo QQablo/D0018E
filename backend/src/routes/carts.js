@@ -119,4 +119,20 @@ router.get('/items', async (req, res) => {
 });
 
 
+// Returns the quantity of all the items in the cart
+router.get('/count', async (req, res) => {
+    try{
+        if(req.session.cart){
+            const { rows } = await pool.query('SELECT SUM(quantity) as count FROM cart_items WHERE cart_id=$1', [req.session.cart.id]);
+            res.status(200).json(rows[0]);
+        } else{
+            return res.status(400).json({message: 'Cart not found.'});
+        }
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({error: 'Something went wrong while fetching the cart.'});
+    }
+});
+
+
 module.exports = router;

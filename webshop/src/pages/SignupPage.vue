@@ -1,4 +1,5 @@
 <template>
+    <NavigationBar />
     <div class="signup-page">
       <h2>Sign Up</h2>
   
@@ -83,6 +84,7 @@
 <script setup>
 import axios from 'axios';
 import {reactive} from 'vue';
+import NavigationBar from '@/components/NavigationBar.vue';
 
 const formData = reactive ({
   firstName: '',

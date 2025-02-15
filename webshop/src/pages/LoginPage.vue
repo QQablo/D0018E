@@ -1,4 +1,5 @@
 <template>
+    <NavigationBar />
     <div class="login-page">
       <h2>Login</h2>
       
@@ -34,6 +35,7 @@
 import { ref} from "vue";
 import axios from "axios";
 import router from '@/config/router';
+import NavigationBar from '@/components/NavigationBar.vue';
 
 const email = ref('');
 const password = ref('');
