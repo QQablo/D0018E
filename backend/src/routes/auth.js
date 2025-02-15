@@ -44,13 +44,14 @@ router.post('/sign_up', async(req, res) => {
 
 // NEED UPDATE FOR CART AND SESSIONS
 router.post('/login', async(req, res) => {
+    const client = await pool.connect();
     try {
         const {email, password} = req.body;
 
         if (!email || !password) { 
             return res.status(400).json({ error: 'All fields must be provided.' });
         } else {
-            const {rows} = await pool.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=1$', [email]);
+            const {rows} = await client.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=1$', [email]);
             //console.log(rows);
             
             if (rows.length === 0) { 
@@ -62,22 +63,44 @@ router.post('/login', async(req, res) => {
                 if (!isPasswordValid) { 
                     return res.status(400).json({error: 'Password is invalid.'});
                 } else {
+                    // Connect the user to the session.
                     req.session.user = {
                         id: user.user_id, 
-                        email: user.email, 
+                        //email: user.email, 
                         role: user.user_role
                     };
-                    // if cart is not empty
-                    // use customer id to check if it has a cart already in the database, 
-                    // if not, connect the anonymous one to logged in user 
-                    // else delete it and load the one stored in the db
+                    
+                    const previousCart = await client.query('SELECT * FROM carts WHERE customer_id=$1',[user_id]);
+                    
+                    if(req.session.cart && previousCart.rows.length > 0){
+                        // In case of an anonymous cart and an existent cart for the logged in 
+                        // user, delete the old one and attach the anonymous to the account.
+                        
+                        await client.query('BEGIN');
+                        // Delete the old cart.
+                        await client.query('DELETE FROM carts WHERE cart_id=$1', [previousCart.rows[0].cart_id]);
+                        // Delete the respective items.
+                        await client.query('DELETE FROM cart_items WHERE cart_id=$1', [previousCart.rows[0].cart_id]);
+                        // Attach the new cart to the logged in account.
+                        await client.query('UPDATE carts SET customer_id=$1 WHERE cart_id=$2', [user_id, req.session.cart.id]);
+                        await client.query('COMMIT');
+                    } else if (req.session.cart && previousCart.rows.length == 0){
+                        // If there is no anonymous cart, the one for the account will be loaded.
+                        req.session.cart = {
+                            id: previousCart.rows[0].cart_id
+                        }
+                        console.log("Old cart loaded.")
+                    }
                     return res.status(200).json({message: 'User signed in successfully.'});
                 }
             }
         }
     } catch (err) {
+        client.query('ROLLBACK');
         console.log(err)
         return res.status(500).json({error: 'Something went wrong while signing in.'})
+    } finally{
+        client.release();
     }
 });
 

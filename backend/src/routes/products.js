@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/product_sizes', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      'SELECT s.size_id, s.size ' +
+        'SELECT s.size_id, s.size ' +
         'FROM sizes s ' + 
         'INNER JOIN product_sizes ps ON s.size_id = ps.size_id ' + 
         'WHERE ps.product_id = $1', [req.query.product_id]);
@@ -39,7 +39,7 @@ router.get('/products', async(req, res) => {
       }
     } catch (err) {
         console.error(err.message);    
-        return res.status(500).json({error: 'Something went wrong while retrieving the products.'})
+        return res.status(500).json({error: 'Something went wrong while retrieving the products.'});
     }
   });
 
@@ -56,7 +56,7 @@ router.get('/categories', async(req, res) => {
       }
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
+      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'});
     }
   });
 
@@ -79,7 +79,7 @@ router.get('/category_products', async(req, res) => {
     }
   } catch (err) {
       console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'})
+      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'});
   }
 });
 
@@ -105,7 +105,7 @@ router.get('/product', async(req, res) => {
 
 
 
-// ADMINISTRATIVE functionalities -> Admin auth not implemented, yet.
+// -------------------------ADMINISTRATIVE functionalities ------------------------> Admin auth not implemented, yet.
 router.delete('/delete_product', async(req, res) => {
     try{
       const {rows} = await pool.query(
@@ -113,11 +113,11 @@ router.delete('/delete_product', async(req, res) => {
       if (rows.length > 0) { 
           return res.status(200).json({message:"Product deleted successfully."});
       } else {
-          return res.status(404).json({error: 'Product not found, invalid id.'})
+          return res.status(404).json({error: 'Product not found, invalid id.'});
       }
     } catch (err) {
       console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while deleting the product.'})
+      return res.status(500).json({error: 'Something went wrong while deleting the product.'});
     }
 });
 
@@ -136,12 +136,12 @@ router.post('/create_product', async(req, res) => {
     }
   } catch (err) {
     console.error(err.message);
-    return res.status(500).json({error: 'Something went wrong while creating the product.'})
+    return res.status(500).json({error: 'Something went wrong while creating the product.'});
   }
 });
 
 // update product
-  // set product category
-
+// set product category
+// set product size
 
 module.exports = router;
