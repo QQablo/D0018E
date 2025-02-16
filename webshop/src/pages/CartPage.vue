@@ -1,13 +1,6 @@
 <template>
-  <div>
-      <h1>Your Cart</h1>
-    </div>
-</template>
-
-<!--
-<template>
+    <h1>Your Cart</h1>
     <div>
-      <h1>Your Cart</h1>
       <div v-if="cart.length === 0">Your cart is empty.</div>
   
       <div v-for="item in cart" :key="item.id">
@@ -21,36 +14,27 @@
       <h2>Total: ${{ total.toFixed(2) }}</h2>
       <button @click="checkout">Payment</button>
     </div>
-  </template>
+</template>
   
-  <script setup>
-  import { computed } from "vue";
-  //import { ref, onMounted} from "vue";
-  //import axios from "axios";
+<script setup>
+import { ref, onMounted} from "vue";
+import axios from "axios";
 
-  //const cart = ref([]);
+const cart = ref([]);
 
-  const total = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-);
-
-const updateQuantity = (id, quantity) => {
-  const item = cart.value.find((item) => item.id === id);
-  if (item) {
-    item.quantity = quantity;
-    saveCart();
-  }
-};
-
-const removeFromCart = (id) => {
-  cart.value = cart.value.filter((item) => item.id !== id);
-  saveCart();
-};
-
-const saveCart = () => {
-
-};
- 
-  </script>
+onMounted(async () => {
+    try {
+    const response = await axios.get('http://localhost:3000/api/cart/items');
+    console.log(response);
+    if(response.status == 200){
+      
+    }
+    } catch (err) {
+        console.error("Something went wrong while fetching sizes:", err);
+    }
+});
+</script>
   
--->
+<style scoped>
+
+</style>
