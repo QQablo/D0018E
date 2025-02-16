@@ -31,10 +31,7 @@
 import { useRoute } from "vue-router";
 import { onMounted, reactive, ref } from "vue";
 import NavigationBar from '@/components/NavigationBar.vue';
-//import { useCartStore } from '@/stores/cart';
 import axios from "axios";
-
-//const cartStore = useCartStore();
 
   
 const $route = useRoute();
@@ -82,7 +79,7 @@ const addToCart = async () => {
   
   try {
     const response = await axios.post('http://localhost:3000/api/cart/add', args);
-    console.log(response);
+    // console.log(response);
     if(response.status == 200){
       navbar.value.updateCartCounter();
     }

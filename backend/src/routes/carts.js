@@ -102,15 +102,21 @@ router.put('/delete', async(req, res) => {
 router.get('/items', async (req, res) => {
     try{
         if (req.session.cart){
-            const {rows} = await pool.query('SELECT * FROM cart_items WHERE cart_id = $1', [req.session.cart.id]);
+            const {rows} = await pool.query(
+                'SELECT  c.cart_item_id, c.product_id, c.product_name, c.quantity, c.sub_total, c.size, p.image ' +
+                'FROM cart_items AS c ' +
+                'INNER JOIN products p ON c.product_id = p.product_id ' +
+                'WHERE cart_id=$1', [req.session.cart.id]);
             if (rows.length > 0){
                 console.log("Cart content returned.");
-                res.status(200).json(rows);
+                return res.status(200).json(rows);
             } else {
                 console.log("Empty cart -> Should not happen.");
+                return res.status(204).json({message:"Empty cart"});
             }
         } else {
             console.log("Cart does not exist.");
+            return res.status(204).json({message:"Empty cart"});
         }
     } catch (err){
         console.error(err.message);
@@ -126,7 +132,7 @@ router.get('/count', async (req, res) => {
             const { rows } = await pool.query('SELECT SUM(quantity) as count FROM cart_items WHERE cart_id=$1', [req.session.cart.id]);
             res.status(200).json(rows[0]);
         } else{
-            return res.status(400).json({message: 'Cart not found.'});
+            return res.status(204).json({message: 'Cart not found.'});
         }
     } catch (err) {
         console.log(err);
