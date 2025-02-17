@@ -14,12 +14,12 @@
                     <button @click="decrease(product.product_id, product.size)">-</button>
                     <p>{{ product.quantity }}</p>
                     <button @click="add(product.product_id, product.size)">+</button>
-                    <button @click="removeFromCart(product.item_id)">Remove</button>    
+                    <button @click="remove(product.item_id)">Remove</button>    
                 </div>
             </div>
 
             <h2>Total: ${{ totalPrice }}</h2>
-            <button @click="checkout">Checkout</button>
+            <button @click="checkout"> Proceed To Checkout</button>
         </div>
     </div>
 </template>
@@ -42,7 +42,7 @@ const fetchCartProducts = async () => {
         //console.log("1")
         if(response.status == 200){
             //console.log("2")
-            console.log(response.data);
+            //console.log(response.data);
             if (response.data.length > 0){
                 cartProducts.value = [];
                 totalPrice.value = 0;
@@ -68,9 +68,9 @@ const fetchCartProducts = async () => {
             // console.log(response)
             location.reload();
         }
-            console.log(response.status);
+            //console.log(response.status);
     } catch (err) {
-        console.error("Something went wrong while fetching sizes:", err.response.data.message);
+        console.error("Something went wrong while fetching the cart products: ", err.response.data.message);
     }
 }
 
@@ -90,7 +90,7 @@ const add = async (productId, size) => {
             console.log("error");
         }
     } catch (error) {
-      console.error("Something went wrong while fetching product details:", error);
+      console.error("Something went wrong while adding the item to the cart: ", error);
     }
 };
 
@@ -100,19 +100,36 @@ const decrease = async (productId, size) => {
             product_id: productId,
             size: size
         }
-        const response = await axios.put('http://localhost:3000/api/cart/delete', input);
+        const response = await axios.put('http://localhost:3000/api/cart/decrease', input);
 
         if(response.status == 200){
-            console.log("Removed successfully", response);
+            console.log("Decreased successfully", response);
             navbar.value.updateCartCounter();
             fetchCartProducts();
         } else {
             console.log("error");
         }
     } catch (error) {
-      console.error("Something went wrong while fetching product details:", error);
+      console.error("Something went wrong while decreasing the product quantity: ", error);
     }
 };
+
+const remove = async (cartItemId) => {
+    try {
+        const response = await axios.delete(`http://localhost:3000/api/cart/delete?cart_item_id=${ cartItemId }`);
+
+        if(response.status == 200){
+            console.log("Deleted successfully", response);
+            navbar.value.updateCartCounter();
+            fetchCartProducts();
+        } else {
+            console.log("error");
+        }
+    } catch (error) {
+      console.error("Something went wrong while removing the product from the cart: ", error);
+    }
+
+}
 
 onMounted(async () => {
     navbar.value.updateCartCounter();

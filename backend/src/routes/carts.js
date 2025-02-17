@@ -3,6 +3,8 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
+// TODO: ADD INPUT VALIDATION TO ALL ROUTES.
+
 // Input: product_id and size.
 router.post('/add', async(req, res) => {
     const client = await pool.connect();
@@ -57,7 +59,7 @@ router.post('/add', async(req, res) => {
 });
 
 // Input: product_id and size.
-router.put('/delete', async(req, res) => {
+router.put('/decrease', async(req, res) => {
     const client = await pool.connect();
     try{
         if(req.session.cart){
@@ -83,7 +85,7 @@ router.put('/delete', async(req, res) => {
                 if(cartIsEmpty.rows.length == 0){
                     client.query('DELETE FROM carts WHERE cart_id=$1', [req.session.cart.id]);
                     req.session.cart = null;
-                    console.log("Last item removed -> Cart deleted.");
+                    console.log("decrease: Last item removed -> Cart deleted.");
                 }
                 return res.status(200).json({message: 'Item removed from the cart.'});
             }
@@ -97,6 +99,37 @@ router.put('/delete', async(req, res) => {
         client.release();
     }
 });
+
+// Remove a product from the cart, regardless of the quantity
+// Input: cart_item_id
+router.delete('/delete', async (req, res) => {
+    
+    const client = await pool.connect();
+    try {
+        if(req.session.cart){
+            await client.query('BEGIN');
+            await client.query( 'DELETE FROM cart_items WHERE cart_item_id = $1 ' + 
+                                'RETURNING (SELECT COUNT(*) - 1 FROM cart_items WHERE cart_id = $2) as cartItems', 
+                                [req.query.cart_item_id, req.session.cart.id]);
+
+            // Delete the cart if it has no items.
+            const { rows } = await client.query('SELECT * from cart_items WHERE cart_id=$1', [req.session.cart.id]);
+            if(rows.length == 0){
+                client.query('DELETE FROM carts WHERE cart_id=$1', [req.session.cart.id]);
+                req.session.cart = null;
+                console.log("delete: Last item removed -> Cart deleted.");
+            }
+            await client.query('COMMIT');
+            return res.status(200).json({message: 'Item removed from the cart.'});
+        }
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error(err.message);
+        return res.status(500).json({error: 'Something went wrong while updating the cart.'});
+    } finally {
+        client.release();
+    }
+})
 
 // Returns all of the items in the cart.
 router.get('/items', async (req, res) => {
