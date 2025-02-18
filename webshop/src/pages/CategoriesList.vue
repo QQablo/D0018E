@@ -29,7 +29,7 @@ const fetchCategories = async () => {
                 }
                 categoriesData.value.push(category);          
             }
-        }
+    }
     //console.log(categoriesData.value);
 
   } catch (error) {
