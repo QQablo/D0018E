@@ -1,17 +1,17 @@
-  <template>
-    <NavigationBar />
-    <h1>{{ categoryData.name }}</h1>
-    <div class="products-per-category">
-      
-      <div v-for="product in categoryData.products" :key="product.product_id" class="product">
-        <router-link :to="'/product/' + product.product_id">
-        <img :src="product.image" width="150" height="100" />
-        <h3>{{ product.name }}</h3>
-        <!--<h4>${{ product.price }}</h4>-->
-      </router-link>
-      </div>
+<template>
+  <NavigationBar />
+  <h1>{{ categoryData.name }}</h1>
+  <div class="products-per-category">
+    
+    <div v-for="product in categoryData.products" :key="product.product_id" class="product">
+      <router-link :to="'/product/' + product.product_id">
+      <img :src="product.image" width="150" height="100" />
+      <h3>{{ product.name }}</h3>
+      <!--<h4>${{ product.price }}</h4>-->
+    </router-link>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup>
 import { useRoute } from "vue-router";

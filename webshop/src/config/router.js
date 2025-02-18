@@ -6,6 +6,7 @@ import CategoriesList from "../pages/CategoriesList.vue";
 import CategoryProducts from "../pages/CategoryProducts.vue";
 import ProductPage from "../pages/ProductPage.vue";
 import CartPage from "../pages/CartPage.vue";
+import CheckoutPage from "@/pages/CheckoutPage.vue";
 
 const routes = [
     { 
@@ -37,6 +38,11 @@ const routes = [
         name: 'cart',
         component: CartPage 
     },
+    {
+        path: '/checkout',
+        name: 'checkout',
+        component: CheckoutPage
+    }
 
 ];
 

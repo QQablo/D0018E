@@ -46,10 +46,13 @@ const navbar = ref();
 const Product = async () => {
   const productId = $route.params.id;
     try {
-      const productResponse = await axios.get(`http://localhost:3000/api/products/product?id=${productId}`);
-      //console.log(productResponse.data);
-      productData.List = productResponse.data.data;
-      //console.log(productData.List)
+		const productResponse = await axios.get(`http://localhost:3000/api/products/product?id=${productId}`);
+		//console.log(productResponse.data);
+		if (productResponse.status == 200){
+			console.log("Product data received.")		
+			productData.List = productResponse.data.data;
+		}
+		//console.log(productData.List)
     } catch (error) {
       console.error("Something went wrong while fetching product details:", error);
     }
@@ -59,7 +62,12 @@ const ProductSizes = async () => {
   const productId = $route.params.id;
   try {
     const sizesResponse = await axios.get(`http://localhost:3000/api/products/product_sizes?product_id=${productId}`);
-    sizes.value = sizesResponse.data.data;
+    if( sizesResponse.status == 200){
+      console.log("Product_sizes returned");
+      sizes.value = sizesResponse.data.data;
+    }
+
+
   } catch (error) {
     console.error("Something went wrong while fetching sizes:", error);
   }

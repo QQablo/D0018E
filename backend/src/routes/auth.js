@@ -105,9 +105,10 @@ router.post('/login', async(req, res) => {
 });
 
 
-router.get('/logout', async (req, res) => {
-    req.session.destroy();
-    console.log("Session destroyed.")
-});
+// router.get('/logout', async (req, res) => {
+//     req.session.destroy();
+//     console.log("Session destroyed.")
+//     return res.status(200).json({ message: "You out!"})
+// });
 
 module.exports = router;

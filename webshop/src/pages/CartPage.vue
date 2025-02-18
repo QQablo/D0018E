@@ -19,7 +19,10 @@
             </div>
 
             <h2>Total: ${{ totalPrice }}</h2>
-            <button @click="checkout"> Proceed To Checkout</button>
+            <RouterLink :to="{name: 'checkout'}">
+                <button> Proceed To Checkout</button>
+            </RouterLink>
+            
         </div>
     </div>
 </template>
