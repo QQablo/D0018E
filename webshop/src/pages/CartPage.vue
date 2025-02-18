@@ -19,7 +19,7 @@
             </div>
 
             <h2>Total: ${{ totalPrice }}</h2>
-            <RouterLink :to="{name: 'checkout'}">
+            <RouterLink :to="{name: 'checkout', params: { price: totalPrice}}  ">
                 <button> Proceed To Checkout</button>
             </RouterLink>
             
