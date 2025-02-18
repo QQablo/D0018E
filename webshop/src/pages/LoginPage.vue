@@ -1,4 +1,5 @@
 <template>
+    <NavigationBar />
     <div class="login-page">
       <h2>Login</h2>
       
@@ -30,21 +31,40 @@
     </div>
   </template>
   
-  <script>
-  export default {
-    data() {
-      return {
-        email: '',
-        password: '',
-      };
-    },
-    methods: {
-      login() {
-        console.log('Logging in with:', this.email, this.password);
-      },
-    },
-  };
-  </script>
+<script setup>
+import { ref} from "vue";
+import axios from "axios";
+import router from '@/config/router';
+import NavigationBar from '@/components/NavigationBar.vue';
+
+const email = ref('');
+const password = ref('');
+
+const login = async () => {
+  if (!password.value || !email.value) {
+      alert('All fields must be filled');
+      return;
+    }
+  try {
+    const credentials = {
+        email: email.value,
+        password: password.value
+    }
+    const response = await axios.post('http://localhost:3000/api/user/login', credentials);
+    //console.log(response);
+    if(response.status == 200){
+        //  TODO: MIGHT NEED TO UPDATE THE CART 
+        console.log("Successful login.");
+        router.push({ name: 'homepage' });
+    } 
+  } catch (error) {
+    alert('Invalid credentials.')
+    console.log(error);
+  }
+};
+
+
+</script>
   
   <style scoped>
   .login-page {

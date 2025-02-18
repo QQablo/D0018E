@@ -1,3 +1,6 @@
 pgdata/
+gammal_db_data/
+
 # local env files
 .env
+.sql

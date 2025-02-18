@@ -1,37 +1,33 @@
 const express = require('express');
 const session = require('express-session')
+const cors = require('cors');
 const routes = require('./routes');
-const pool = require('./config/db');
 
 const app = express();
 
 app.use(express.json()); // Parse JSON bodies from api requests 
 
+app.use(cors({
+    credentials: true, // To allow cookies
+    origin: 'http://localhost:8080' // Allow requests from this origin
+  }
+)); 
+
+
 app.use(session({
-  secret: 'your-secret-key',
+  name: "express-session",
+  secret: 'D0018E - Databasteknik',
   // Don't save empty sessions in the session store, i.e., when users don't do anything on the site
   saveUninitialized: false ,
   // Don't save the session if it hasn't been modified
   resave: false,
   cookie: { 
-    maxAge: 60000 * 60 
+    maxAge: 60 * 60 * 1000 // 1h
   }
 }));
 
 
-// Routes
 app.use(routes);
-
-
-// // Test
-// app.get('/', async(req, res) => {
-//   try{
-//     const {rows} = await pool.query('SELECT * FROM product');
-//     res.json(rows);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
-// });
 
 
 const PORT = process.env.SERVER_PORT || 3000;
