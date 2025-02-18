@@ -39,11 +39,10 @@ const routes = [
         component: CartPage 
     },
     {
-        path: '/checkout',
+        path: '/checkout/:price',
         name: 'checkout',
         component: CheckoutPage
-    }
-
+    }, 
 ];
 
 const router = createRouter({

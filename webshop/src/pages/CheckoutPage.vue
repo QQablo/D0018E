@@ -59,13 +59,20 @@
 
         <button type="submit">Simulate order</button>
       </form>
-
+    <div class="order-info">
+      <p>Nr of Items: {{ itemCount }} </p>
+      <p>Total Price: {{ totalPrice }}</p>
+    </div>
     </div>
 </template>
   
 <script setup>
 import axios from 'axios';
-import {reactive} from 'vue';
+import {reactive, ref, onMounted} from 'vue';
+import { useRoute } from 'vue-router';
+
+
+const $route = useRoute();
 
 const formData = reactive ({
 	firstName: '',
@@ -74,6 +81,9 @@ const formData = reactive ({
 	phone: '',
 	shippingAddress: ''
 });
+
+const itemCount = ref(0);
+const totalPrice = ref(0);
         
 const createOrder = async () => {
 	console.log(formData)
@@ -88,6 +98,24 @@ const createOrder = async () => {
 		console.log(response.data);
 	}
 }
+
+const fetchCartCounter = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/cart/count');
+    if (response.status == 200){
+		itemCount.value = response.data.count;
+    } 
+  } catch (error) {
+		console.error("Cart not available. Error: ", error.response.data.message);
+  }
+};
+
+onMounted(() =>{
+	fetchCartCounter();
+	totalPrice.value = $route.params.price;
+	// console.log(itemCount.value);
+	// console.log(totalPrice.value);
+});
 </script>
   
 <style scoped>

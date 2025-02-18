@@ -124,7 +124,7 @@ router.delete('/delete', async (req, res) => {
                 req.session.cart = null;
                 console.log("delete: Last item removed -> Cart deleted.");
             } else {
-                await client.query('UPDATE carts last_updated = CURRENT_DATE WHERE cart_id = $1', [req.session.cart.id]);
+                await client.query('UPDATE carts SET last_updated = CURRENT_DATE WHERE cart_id = $1', [req.session.cart.id]);
             }
             await client.query('COMMIT');
             return res.status(200).json({message: 'Item removed from the cart.'});
@@ -138,6 +138,7 @@ router.delete('/delete', async (req, res) => {
     }
 })
 
+// test comment
 // Returns all of the items in the cart.
 router.get('/items', async (req, res) => {
     try{
