@@ -89,7 +89,7 @@ router.put('/decrease', async(req, res) => {
                     req.session.cart = null;
                     console.log("decrease: Last item removed -> Cart deleted.");
                 } else {
-                    await client.query('UPDATE SET carts last_updated = CURRENT_DATE WHERE cart_id = $1', [req.session.cart.id]);
+                    await client.query('UPDATE carts SET last_updated = CURRENT_DATE WHERE cart_id = $1', [req.session.cart.id]);
                 }
                 return res.status(200).json({message: 'Item removed from the cart.'});
             }

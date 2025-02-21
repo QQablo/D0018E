@@ -85,6 +85,7 @@
 import axios from 'axios';
 import {reactive} from 'vue';
 import NavigationBar from '@/components/NavigationBar.vue';
+import router from '@/config/router';
 
 const formData = reactive ({
   firstName: '',
@@ -110,6 +111,10 @@ const signup = async () => {
     //console.log('Signing up with:', formData.firstName, formData.lastName, formData.email, formData.phone, formData.address, formData.password);
     const response = await axios.post('http://localhost:3000/api/user/sign_up', formData);
     console.log(response)
+    if(response.status == 201){
+        console.log("User registered.");
+        router.push('/login');
+    }
     
 }
 </script>

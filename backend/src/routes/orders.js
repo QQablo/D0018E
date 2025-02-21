@@ -4,8 +4,6 @@ const pool = require('../config/db');
 const router = express.Router();
 
 // TODO: ADD INPUT VALIDATION TO ALL ROUTES.
-
-
 router.post('/create', async (req, res) => {
     const client = await pool.connect();
     try{
@@ -61,6 +59,8 @@ router.post('/create', async (req, res) => {
         await client.query('DELETE FROM carts WHERE cart_id = $1', [req.session.cart.id]);
 
         await client.query('COMMIT');
+
+        req.session.cart = null;
   
         return res.status(201).json({ message: 'Order created successfully', orderId });
     } catch (error) {

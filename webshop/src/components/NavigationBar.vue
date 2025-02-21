@@ -2,10 +2,12 @@
     <nav class="navbar">
       <ul>
         <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/login">Login</router-link></li>
-        <li><router-link to="/signup">Signup</router-link></li>
+        <li v-if="!loggedIn"><router-link to="/login">Login</router-link></li>
+        <li v-if="!loggedIn"><router-link to="/signup">Signup</router-link></li>
+		<!-- <li v-if="loggedIn"><router-link to="/profile">Profile</router-link></li> -->
         <li><router-link to="/categories">Categories</router-link></li>
         <li><router-link :to="{name:'cart'}">🛍️ ({{ cartCount }})</router-link></li>  
+		<li v-if="loggedIn"><router-link @click="logout" to="#">Logout</router-link></li>
       </ul>
     </nav>
 </template>
@@ -13,28 +15,44 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-// prop to navbar from product/checkout pages?
+import checkAuth from '../utils/auth.js';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
 const cartCount = ref(0);
+const loggedIn = ref(false);
 
 const updateCartCounter = async () => {
   try {
     const response = await axios.get('http://localhost:3000/api/cart/count');
     if (response.status == 200){
 		cartCount.value = response.data.count;
-    } 
+    } else{
+		cartCount.value = 0;
+	}
   } catch (error) {
 		console.error("Cart not available. Error: ", error.response.data.message);
   }
 };
 
-// https://stackoverflow.com/questions/72591866/how-to-fix-defineexpose-method-not-defined-in-vue3
+const logout = async () => {
+    try {
+      await axios.get('http://localhost:3000/api/user/logout');
+      loggedIn.value = false;
+      router.push('/login');
+    } catch (error) {
+      console.error("Error logging out: ", error.response.data.message);
+    }
+  };
 
 // eslint-disable-next-line no-undef
 defineExpose({ updateCartCounter });
 
-onMounted(() =>{
-  updateCartCounter();
-
+onMounted(async () =>{
+    updateCartCounter();
+    loggedIn.value = await checkAuth('customer');
+	console.log(loggedIn.value);
 })
 </script>
   
@@ -66,3 +84,4 @@ onMounted(() =>{
 	text-decoration: underline;
 }
 </style>
+

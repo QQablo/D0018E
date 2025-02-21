@@ -51,7 +51,7 @@ router.post('/login', async(req, res) => {
         if (!email || !password) { 
             return res.status(400).json({ error: 'All fields must be provided.' });
         } else {
-            const {rows} = await client.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=1$', [email]);
+            const {rows} = await client.query('SELECT user_id, email, user_role, passwrd FROM users WHERE email=$1', [email]);
             //console.log(rows);
             
             if (rows.length === 0) { 
@@ -70,7 +70,7 @@ router.post('/login', async(req, res) => {
                         role: user.user_role
                     };
                     
-                    const previousCart = await client.query('SELECT * FROM carts WHERE customer_id=$1',[user_id]);
+                    const previousCart = await client.query('SELECT * FROM carts WHERE customer_id=$1',[user.user_id]);
                     
                     if(req.session.cart && previousCart.rows.length > 0){
                         // In case of an anonymous cart and an existent cart for the logged in 
@@ -105,10 +105,21 @@ router.post('/login', async(req, res) => {
 });
 
 
-// router.get('/logout', async (req, res) => {
-//     req.session.destroy();
-//     console.log("Session destroyed.")
-//     return res.status(200).json({ message: "You out!"})
-// });
+router.get('/logout', async (req, res) => {
+    req.session.destroy();
+    res.clearCookie('express-session');
+    console.log("Session destroyed.");
+    return res.status(200).json({ message: "You out!"});
+});
+
+
+router.get('/check', async (req, res) => {
+    if (!req.session.user) {
+        return res.json({authenticated: false});
+    } else {
+        return res.json({authenticated: !!req.session.user, role: req.session.user.role});
+    }
+});
+
 
 module.exports = router;
