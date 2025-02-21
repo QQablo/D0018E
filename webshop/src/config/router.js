@@ -65,26 +65,26 @@ const router = createRouter({
 // });
 
 // Global navigation guard
-router.beforeEach((to, from, next) => {
-    // Check if the route requires authentication
-    if (to.meta.requiresAuth) {
-        try {
-            // Check token expiration if needed
-            if(to.meta.role === decodedToken.user.role) {
-                console.log("Access granted");
-                next();
-            } else{
-                console.log("Access denied");
-                next({ name: 'home' });
-            }
-        } catch (error) {
-            console.error('Token err:', error);
-            next({ name: 'login' });
-        }
-    }
-    } else {
-        next();
-    }
-});
+// router.beforeEach((to, from, next) => {
+//     Check if the route requires authentication
+//     if (to.meta.requiresAuth) {
+//         try {
+//             Check token expiration if needed
+//             if(to.meta.role === decodedToken.user.role) {
+//                 console.log("Access granted");
+//                 next();
+//             } else{
+//                 console.log("Access denied");
+//                 next({ name: 'home' });
+//             }
+//         } catch (error) {
+//             console.error('Token err:', error);
+//             next({ name: 'login' });
+//         }
+//     }
+//     } else {
+//         next();
+//     }
+// });
 
 export default router;

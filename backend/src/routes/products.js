@@ -3,41 +3,59 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
-// To get the logged-in user's ID from session
-router.get('/user', async (req, res) => {
-  try {
-    if (!req.session.user) {
-      return res.status(401).json({ error: 'User not logged in' });
-    }
-    const user_id = req.session.user.id;
-    return res.status(200).json({ user_id }); 
+// // To get the logged-in user's ID from session
+// router.get('/user', async (req, res) => {
+//   try {
+//     if (!req.session.user) {
+//       return res.status(401).json({ error: 'User not logged in' });
+//     }
+//     const user_id = req.session.user.id;
+//     return res.status(200).json({ user_id }); 
 
-  } catch (err) {
-    console.error('Error fetching user data:', err);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
-});
+//   } catch (err) {
+//     console.error('Error fetching user data:', err);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 // Adding a Review to the Database
 router.post('/add_review', async (req, res) => {
-    const { customer_id, product_id, stars, title, text } = req.body;
+    const { product_id, stars, title, text } = req.body;
   try {
     const {rows} = await pool.query(
-      'INSERT INTO reviews (customer_id, product_id, stars, title, text)' +
-       'VALUES ($1, $2, $3, $4, $5) RETURNING review_id', 
-      [customer_id, product_id, stars, title, text]);
+		'INSERT INTO reviews (customer_id, product_id, stars, title, text)' +
+		'VALUES ($1, $2, $3, $4, $5) RETURNING review_id', 
+		[req.session.user.id, product_id, stars, title, text]);
 
     if (rows.length > 0) { 
-      return res.status(200).json({message:"Review added successfully."});
+		return res.status(200).json({message:"Review added successfully."});
   } else {
-      return res.status(404).json({error: 'Failed to add review'});
+		return res.status(404).json({error: 'Failed to add review'});
   }
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
+		console.error(err.message);
+		return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
   }
 });
 
+// // FETCH ALL REVEIEW FOR A  a Review to the Database
+// router.get('/product_reviews', async (req, res) => {
+//     const { product_id } = req.body;
+//   try {
+//     const {rows} = await pool.query(
+// 		''
+// 		[product_id]);
+
+//     if (rows.length > 0) { 
+// 		return res.status(200).json({message:"Review added successfully."});
+//   } else {
+// 		return res.status(404).json({error: 'Failed to add review'});
+//   }
+//   } catch (err) {
+// 		console.error(err.message);
+// 		return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
+//   }
+// });
 
 // Returns all the sizes for a product
 router.get('/product_sizes', async (req, res) => {

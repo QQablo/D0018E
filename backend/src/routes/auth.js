@@ -69,27 +69,38 @@ router.post('/login', async(req, res) => {
                         //email: user.email, 
                         role: user.user_role
                     };
-                    
+                    console.log("Successful login")
+                    console.log("IN LOGIN, USER ID: " + user.user_id);
+                    // Check if a cart exists for the logged in user.
                     const previousCart = await client.query('SELECT * FROM carts WHERE customer_id=$1',[user.user_id]);
                     
                     if(req.session.cart && previousCart.rows.length > 0){
                         // In case of an anonymous cart and an existent cart for the logged in 
                         // user, delete the old one and attach the anonymous to the account.
-                        
+                        console.log("USER HAS AN OLD AND A NEW CART -> DELETE THE OLD ONE")
                         await client.query('BEGIN');
-                        // Delete the old cart.
-                        await client.query('DELETE FROM carts WHERE cart_id=$1', [previousCart.rows[0].cart_id]);
+
                         // Delete the respective items.
                         await client.query('DELETE FROM cart_items WHERE cart_id=$1', [previousCart.rows[0].cart_id]);
+                        // Delete the old cart.
+                        await client.query('DELETE FROM carts WHERE cart_id=$1', [previousCart.rows[0].cart_id]);
+                        
                         // Attach the new cart to the logged in account.
-                        await client.query('UPDATE carts SET customer_id=$1 WHERE cart_id=$2', [user_id, req.session.cart.id]);
+                        await client.query('UPDATE carts SET customer_id=$1 WHERE cart_id=$2', [user.user_id, req.session.cart.id]);
                         await client.query('COMMIT');
+                        
+                        console.log("Old cart deleted. New cart ID: " + req.session.cart.id);
+
                     } else if (req.session.cart && previousCart.rows.length == 0){
                         // If there is no anonymous cart, the one for the account will be loaded.
+                        console.log("USER HAS A NEW CART");
+                        await client.query('UPDATE carts SET customer_id=$1 WHERE cart_id=$2', [user.user_id, req.session.cart.id]);
+                    } else if (previousCart.rows.length > 0){
+                        // If there is no anonymous cart, the one for the account will be loaded.
+                        console.log("USER HAS AN OLD CART -> LOADING IT");
                         req.session.cart = {
                             id: previousCart.rows[0].cart_id
                         }
-                        console.log("Old cart loaded.")
                     }
                     return res.status(200).json({message: 'User signed in successfully.'});
                 }

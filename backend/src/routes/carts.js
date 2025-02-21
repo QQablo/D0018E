@@ -7,16 +7,17 @@ const router = express.Router();
 
 // Input: product_id and size.
 router.post('/add', async(req, res) => {
+    
     const client = await pool.connect();
     try{
         const insertQuery = 'INSERT INTO cart_items (cart_id, product_id, product_name, quantity, sub_total, size) ' + 
                             'SELECT $1, product_id, name, 1, price, $2 FROM products WHERE product_id=$3';
         if(!req.session.cart){ // Create a cart if one is does not exist.
-            const customerId = null;
+            let customerId = null;
             if(req.session.user){ // If a customer is logged in, attached the cart to the account.
                 customerId = req.session.user.id;
             }
-
+            console.log("USER ID: ", customerId);
             await client.query('BEGIN'); // Start a transaction-
             // Create the cart.
             const newCart = await client.query('INSERT INTO carts (customer_id) VALUES ($1) RETURNING cart_id', [customerId]);
@@ -33,12 +34,14 @@ router.post('/add', async(req, res) => {
             }
             return res.status(200).json({message: 'Cart created and item added to it.'});
         } else { // Cart exists.
+            
             const {rows} = await client.query(
                 'SELECT * FROM cart_items WHERE cart_id=$1 AND product_id=$2 AND size=$3',
                 [req.session.cart.id, req.body.product_id, req.body.size]
             );
             // Check if shoes of the same type and size are already in the cart.
             if (rows.length > 0){ // Increase the quantity and price.
+                
                 const cartItemID = rows[0].cart_item_id;
                 //console.log(cartItemID);
                 await client.query(
