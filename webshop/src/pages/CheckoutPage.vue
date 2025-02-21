@@ -86,7 +86,7 @@ const itemCount = ref(0);
 const totalPrice = ref(0);
         
 const createOrder = async () => {
-	console.log(formData)
+	//console.log(formData);
 	if (!formData.firstName || !formData.lastName || !formData.email ||  !formData.phone || !formData.shippingAddress) {
 		alert('Please fill in all fields');
 		return;

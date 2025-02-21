@@ -4,8 +4,6 @@ const pool = require('../config/db');
 const router = express.Router();
 
 // TODO: ADD INPUT VALIDATION TO ALL ROUTES.
-
-
 router.post('/create', async (req, res) => {
     const client = await pool.connect();
     try{
@@ -61,6 +59,8 @@ router.post('/create', async (req, res) => {
         await client.query('DELETE FROM carts WHERE cart_id = $1', [req.session.cart.id]);
 
         await client.query('COMMIT');
+
+        req.session.cart = null;
   
         return res.status(201).json({ message: 'Order created successfully', orderId });
     } catch (error) {
@@ -90,6 +90,31 @@ router.get('/history', async(req, res) => {
         client.release();
     }
 });
+
+router.get('/can_write_review', async(req, res) => {
+    try {
+        if (!req.session.user) {
+            console.log('Not a logged in user. In can_write_review route.')
+            return res.status(401);
+        }
+
+        const { rows } = await pool.query(
+            'SELECT * FROM orders as o ' +
+            'INNER JOIN order_items AS oi ' +
+            'ON o.order_id = oi.order_id ' + 
+            'WHERE o.customer_id=$1 AND oi.product_id = $2', [req.session.user.id, req.query.product_id]);
+
+        if (rows.length > 0) {
+            return res.status(200).json({ can_write_review: true });
+        } else {
+            return res.status(200).json({ can_write_review: false });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Error checking if user can write a review.' });
+    } 
+});
+
 
 // Might want to update as an admin.
 
