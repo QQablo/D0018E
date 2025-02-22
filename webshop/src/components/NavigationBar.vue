@@ -4,7 +4,8 @@
         <li><router-link to="/">Home</router-link></li>
         <li v-if="!loggedIn"><router-link to="/login">Login</router-link></li>
         <li v-if="!loggedIn"><router-link to="/signup">Signup</router-link></li>
-		<!-- <li v-if="loggedIn"><router-link to="/profile">Profile</router-link></li> -->
+		<!-- <li v-if="loggedIn && isCustomer"><router-link to="/profile">Profile</router-link></li> -->
+		<li v-if="loggedIn && isAdmin"><router-link to="/admin_dashboard">Dashboard</router-link></li>
         <li><router-link to="/categories">Categories</router-link></li>
         <li><router-link :to="{name:'cart'}">🛍️ ({{ cartCount }})</router-link></li>  
 		<li v-if="loggedIn"><router-link @click="logout" to="#">Logout</router-link></li>
@@ -22,6 +23,8 @@ const router = useRouter();
 
 const cartCount = ref(0);
 const loggedIn = ref(false);
+const isAdmin = ref(false);
+// const isCustomer = ref(false);
 
 const updateCartCounter = async () => {
   try {
@@ -38,11 +41,11 @@ const updateCartCounter = async () => {
 
 const logout = async () => {
     try {
-      await axios.get('http://localhost:3000/api/user/logout');
-      loggedIn.value = false;
-      router.push('/login');
+		await axios.get('http://localhost:3000/api/user/logout');
+		loggedIn.value = false;
+		router.push('/login');
     } catch (error) {
-      console.error("Error logging out: ", error.response.data.message);
+		console.error("Error logging out: ", error.response.data.message);
     }
   };
 
@@ -52,7 +55,7 @@ defineExpose({ updateCartCounter });
 onMounted(async () =>{
     updateCartCounter();
     loggedIn.value = await checkAuth('customer');
-	console.log(loggedIn.value);
+	//console.log(loggedIn.value);
 })
 </script>
   
