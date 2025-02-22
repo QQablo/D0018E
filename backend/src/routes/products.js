@@ -3,21 +3,6 @@ const pool = require('../config/db');
 
 const router = express.Router();
 
-// // To get the logged-in user's ID from session
-// router.get('/user', async (req, res) => {
-//   try {
-//     if (!req.session.user) {
-//       return res.status(401).json({ error: 'User not logged in' });
-//     }
-//     const user_id = req.session.user.id;
-//     return res.status(200).json({ user_id }); 
-
-//   } catch (err) {
-//     console.error('Error fetching user data:', err);
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
-
 // Adding a Review to the Database
 router.post('/add_review', async (req, res) => {
     const { product_id, stars, title, text } = req.body;
@@ -38,24 +23,27 @@ router.post('/add_review', async (req, res) => {
   }
 });
 
-// // FETCH ALL REVEIEW FOR A  a Review to the Database
-// router.get('/product_reviews', async (req, res) => {
-//     const { product_id } = req.body;
-//   try {
-//     const {rows} = await pool.query(
-// 		''
-// 		[product_id]);
-
-//     if (rows.length > 0) { 
-// 		return res.status(200).json({message:"Review added successfully."});
-//   } else {
-// 		return res.status(404).json({error: 'Failed to add review'});
-//   }
-//   } catch (err) {
-// 		console.error(err.message);
-// 		return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
-//   }
-// });
+// Returns all reviews for a product
+router.get('/product_reviews', async (req, res) => {
+  const { id: product_id } = req.query;
+  try {
+    const { rows } = await pool.query(
+      'SELECT r.review_id, r.stars, r.title, r.text, ' + 
+        'u.first_name, u.last_name ' +
+       'FROM reviews r ' +
+       'INNER JOIN users u ON r.customer_id = u.user_id ' +
+       'WHERE r.product_id = $1', [product_id]
+    );
+    if (rows.length > 0) {
+      return res.status(200).json({ message: "Reviews retrieved successfully", data: rows });
+    } else {
+      return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
+  }
+});
 
 // Returns all the sizes for a product
 router.get('/product_sizes', async (req, res) => {
