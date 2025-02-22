@@ -102,7 +102,7 @@ router.post('/login', async(req, res) => {
                             id: previousCart.rows[0].cart_id
                         }
                     }
-                    return res.status(200).json({message: 'User signed in successfully.'});
+                    return res.status(200).json({message: 'User signed in successfully.', role: req.session.user.role});
                 }
             }
         }
