@@ -133,13 +133,13 @@ const addToCart = async () => {
 };
 
 const submitReview = async () => {
-  const productId = $route.params.id;
-const R_args = {
-	product_id: productId,
-	title: review.title,
-	text: review.text,
-	stars: review.rating
-}
+	const productId = $route.params.id;
+	const R_args = {
+		product_id: productId,
+		title: review.title,
+		text: review.text,
+		stars: review.rating
+	}
 try {
 	await axios.post('http://localhost:3000/api/products/add_review', R_args);
 	console.log("Review submitted successfully");
@@ -184,9 +184,9 @@ const fetchReviews = async () => {
 
 
 onMounted(async () => {
-	Product();
-	ProductSizes();
-  fetchReviews();
+	await Product();
+	await ProductSizes();
+	await fetchReviews();
 	loggedIn.value = await checkAuth('customer');
 	await canWriteReview();
   
