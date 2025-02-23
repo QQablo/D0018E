@@ -122,36 +122,25 @@ const addToCart = async () => {
   }
 };
 
-// const getUserID = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:3000/api/products/user', { withCredentials: true });
-//     return response.data.user_id;
-//   } catch (error) {
-//     console.error("Error fetching userID:", error);
-//     return null;
-//   }
-// };
 
 const submitReview = async () => {
   const productId = $route.params.id;
-  //const customerId = 1;
-//   const customerId = await getUserID();
-const R_args = {
-// customer_id: customerId,
-	product_id: productId,
-	title: review.title,
-	text: review.text,
-	stars: review.rating
-}
-try {
-	await axios.post('http://localhost:3000/api/products/add_review', R_args);
-	console.log("Review submitted successfully");
-	review.title = '';
-	review.text = '';
-	review.stars = null;
-} catch (error) {
-	console.error("Something went wrong while submitting review:", error);
-}
+	const R_args = {
+		// customer_id: customerId,
+		product_id: productId,
+		title: review.title,
+		text: review.text,
+		stars: review.rating
+	}
+	try {
+		await axios.post('http://localhost:3000/api/products/add_review', R_args);
+		console.log("Review submitted successfully");
+		review.title = '';
+		review.text = '';
+		review.stars = null;
+	} catch (error) {
+		console.error("Something went wrong while submitting review:", error);
+	}
 };
 
 

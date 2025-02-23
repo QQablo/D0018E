@@ -10,6 +10,7 @@ import CheckoutPage from "@/pages/CheckoutPage.vue";
 import DashboardPage from "@/pages/AdminPages/DashboardPage.vue";
 import checkAuth from '../utils/auth.js';
 import ProductsPage from "@/pages/AdminPages/ProductsPage.vue";
+import CreateProductPage from "@/pages/AdminPages/CreateProductPage.vue";
 
 const routes = [
     { 
@@ -56,6 +57,12 @@ const routes = [
         path: '/admin/products',
         name: 'admin_products',
         component: ProductsPage,
+        meta: { requiresAuth: true, role: 'admin' }
+    },
+    {
+        path: '/admin/products/create',
+        name: 'admin_create_product',
+        component: CreateProductPage,
         meta: { requiresAuth: true, role: 'admin' }
     }
     // {

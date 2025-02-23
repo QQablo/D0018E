@@ -9,8 +9,10 @@
                     {{ category.name }}
                 </option>
             </select>
-
-          <button @click="goToCreateProduct" class="create-button">Create New Product</button>
+        
+            <RouterLink :to="{name:'admin_create_product'}">
+                <button @click="goToCreateProduct" class="create-button">Create New Product</button>
+            </RouterLink>
         </div>
         
         <table class="products-table">
