@@ -4,11 +4,12 @@
         <li><router-link to="/">Home</router-link></li>
         <li v-if="!loggedIn"><router-link to="/login">Login</router-link></li>
         <li v-if="!loggedIn"><router-link to="/signup">Signup</router-link></li>
-		<!-- <li v-if="loggedIn && isCustomer"><router-link to="/profile">Profile</router-link></li> -->
-		<li v-if="loggedIn && isAdmin"><router-link to="/admin_dashboard">Dashboard</router-link></li>
+
         <li><router-link to="/categories">Categories</router-link></li>
-        <li><router-link :to="{name:'cart'}">🛍️ ({{ cartCount }})</router-link></li>  
+		<li v-if="loggedIn && isCustomer"><router-link to="#">Profile</router-link></li>
+		<li v-if="loggedIn && isAdmin"><router-link :to="{name: 'admin_dashboard'}">Dashboard</router-link></li>
 		<li v-if="loggedIn"><router-link @click="logout" to="#">Logout</router-link></li>
+		<li><router-link :to="{name:'cart'}">🛍️ ({{ cartCount }})</router-link></li> 
       </ul>
     </nav>
 </template>
@@ -24,7 +25,7 @@ const router = useRouter();
 const cartCount = ref(0);
 const loggedIn = ref(false);
 const isAdmin = ref(false);
-// const isCustomer = ref(false);
+const isCustomer = ref(false);
 
 const updateCartCounter = async () => {
   try {
@@ -53,9 +54,22 @@ const logout = async () => {
 defineExpose({ updateCartCounter });
 
 onMounted(async () =>{
-    updateCartCounter();
-    loggedIn.value = await checkAuth('customer');
-	//console.log(loggedIn.value);
+    await updateCartCounter();
+    const userAuth = await checkAuth();
+	//console.log(userAuth);
+	
+	if (userAuth.auth){
+		if(userAuth.role == 'customer') {
+			isCustomer.value = true;
+		} else if (userAuth.role == 'admin'){
+			isAdmin.value = true;
+		}
+		loggedIn.value = true;
+	}
+
+	// console.log(isAdmin.value)
+	// console.log(isCustomer.value)
+	// console.log(loggedIn.value)
 })
 </script>
   

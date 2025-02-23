@@ -7,6 +7,10 @@ import CategoryProducts from "../pages/CategoryProducts.vue";
 import ProductPage from "../pages/ProductPage.vue";
 import CartPage from "../pages/CartPage.vue";
 import CheckoutPage from "@/pages/CheckoutPage.vue";
+import DashboardPage from "@/pages/AdminPages/DashboardPage.vue";
+import checkAuth from '../utils/auth.js';
+import ProductsPage from "@/pages/AdminPages/ProductsPage.vue";
+import CreateProductPage from "@/pages/AdminPages/CreateProductPage.vue";
 
 const routes = [
     { 
@@ -42,7 +46,25 @@ const routes = [
         path: '/checkout/:price',
         name: 'checkout',
         component: CheckoutPage,
-    }, 
+    },
+    {
+        path: '/admin/dashboard',
+        name: 'admin_dashboard',
+        component: DashboardPage,
+        meta: { requiresAuth: true, role: 'admin' }
+    },
+    {
+        path: '/admin/products',
+        name: 'admin_products',
+        component: ProductsPage,
+        meta: { requiresAuth: true, role: 'admin' }
+    },
+    {
+        path: '/admin/products/create',
+        name: 'admin_create_product',
+        component: CreateProductPage,
+        meta: { requiresAuth: true, role: 'admin' }
+    }
     // {
     //     path: '/profile',
     //     name: 'profile',
@@ -56,35 +78,22 @@ const router = createRouter({
     routes,
 });
 
-// router.beforeEach(async (to) => {
-//     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-//       await authStore.checkAuth(); // Double-check with server
-//       if (!authStore.isAuthenticated) return '/login';
-//     }
-//     return true;
-// });
+router.beforeEach(async (to, from, next) => {
+    if (to.meta.requiresAuth) {
+        const user = await checkAuth(); 
+        // // console.log(user)
+        // console.log("Page requires user role: " + to.meta.role);
+        if(to.meta.role == user.role && user.auth){
+            console.log("Access to private page granted.")
+            next();
+        } else {
+            console.log("Access denied");
+            next({ name: 'homepage' });
+        }
+    } else {
+        next();
+    }
+});
 
-// Global navigation guard
-// router.beforeEach((to, from, next) => {
-//     Check if the route requires authentication
-//     if (to.meta.requiresAuth) {
-//         try {
-//             Check token expiration if needed
-//             if(to.meta.role === decodedToken.user.role) {
-//                 console.log("Access granted");
-//                 next();
-//             } else{
-//                 console.log("Access denied");
-//                 next({ name: 'home' });
-//             }
-//         } catch (error) {
-//             console.error('Token err:', error);
-//             next({ name: 'login' });
-//         }
-//     }
-//     } else {
-//         next();
-//     }
-// });
 
 export default router;
