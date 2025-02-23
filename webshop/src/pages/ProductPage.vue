@@ -46,9 +46,18 @@
 	</form>
 </div>
 
-<!-- <div class="product-reviews">
+ <!-- Display Reviews -->
+<div class="reviews-section">
+  <h3>Customer Reviews</h3>
+  <div v-if="reviewData.List.length === 0">No reviews yet.</div>
+  <div v-for="review in reviewData.List" :key="review.review_id" class="review">
+    <h4>{{ review.title }}</h4>
+    <p><strong>Rating:</strong> {{ review.stars }} ⭐</p>
+    <p>{{ review.text }}</p>
+    <p><em>By: {{ review.first_name }} {{ review.last_name }}</em></p>
+  </div>
+</div>
 
-</div> -->
 </template>
   
 <script setup>
@@ -65,6 +74,7 @@ const selectedSize = ref(null);
 const navbar = ref();
 const loggedIn = ref(false);
 const hasBoughtProduct = ref(false);
+const reviewData = reactive({ List: [] });
 
 const review = reactive({
   title: '',
@@ -122,25 +132,23 @@ const addToCart = async () => {
   }
 };
 
-
 const submitReview = async () => {
   const productId = $route.params.id;
-	const R_args = {
-		// customer_id: customerId,
-		product_id: productId,
-		title: review.title,
-		text: review.text,
-		stars: review.rating
-	}
-	try {
-		await axios.post('http://localhost:3000/api/products/add_review', R_args);
-		console.log("Review submitted successfully");
-		review.title = '';
-		review.text = '';
-		review.stars = null;
-	} catch (error) {
-		console.error("Something went wrong while submitting review:", error);
-	}
+const R_args = {
+	product_id: productId,
+	title: review.title,
+	text: review.text,
+	stars: review.rating
+}
+try {
+	await axios.post('http://localhost:3000/api/products/add_review', R_args);
+	console.log("Review submitted successfully");
+	review.title = '';
+	review.text = '';
+	review.stars = null;
+} catch (error) {
+	console.error("Something went wrong while submitting review:", error);
+}
 };
 
 
@@ -157,14 +165,33 @@ const canWriteReview = async () => {
   }
 };
 
+const fetchReviews = async () => { 
+  const productId = $route.params.id;
+  try {
+    const reviewResponse = await axios.get('http://localhost:3000/api/products/product_reviews?id=' + productId);
+    if (reviewResponse.status == 200) {
+      if (reviewResponse.data.data.length == 0) {
+        console.log("There are no reviews for this product.");
+      } else {
+        console.log("Review data received.");
+        reviewData.List = reviewResponse.data.data;
+      }
+    }
+  } catch (error) {
+    console.error("Something went wrong while fetching reviews:", error);
+  }
+};
+
+
 onMounted(async () => {
 	Product();
 	ProductSizes();
+  fetchReviews();
 	loggedIn.value = await checkAuth('customer');
 	await canWriteReview();
-
-	console.log(loggedIn.value);
-	console.log(hasBoughtProduct.value);
+  
+	//console.log(loggedIn.value);
+	//console.log(hasBoughtProduct.value);
 });
 </script>
   
@@ -219,7 +246,7 @@ onMounted(async () => {
 }
 
 
-.review-section {
+.review-section { 
   margin-top: 20px;
   padding: 20px;
   border-top: 2px solid #ccc;
@@ -253,4 +280,21 @@ onMounted(async () => {
   max-width: 200px;  
   margin: 0 auto;  
 }
+
+
+.reviews-section {
+  width: 30%; 
+  margin: 2px 20px 20px auto;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.review {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+
 </style>
