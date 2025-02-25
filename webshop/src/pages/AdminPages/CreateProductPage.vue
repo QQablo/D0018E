@@ -19,9 +19,16 @@
                 <h3>Sizes and Stock</h3>
                 <div v-for="(size, index) in product.sizes" :key="index" class="size-stock-row">
                     <label class="size-label">Size:</label><br>
-                    <input type="text" v-model="size.size" placeholder="e.g., 38" required />
+                    <select v-model="size.size" required>
+                        <option value="" disabled>Select a size</option>
+                        <option v-for="item in availableSizes(index)" :key="item.id" :value="item.id">
+                            {{ item.size }}
+                        </option>
+                    </select>
+
                     <label class="stock-label">Stock:</label>
                     <input type="number" v-model="size.stock" min="0" required />
+
                     <button type="button" class="remove-size" @click="removeSize(index)">Remove</button>
                 </div>
             </div>
@@ -44,8 +51,10 @@
 import AdminNavBar from '@/components/AdminNavBar.vue';
 import { reactive, ref, onMounted } from 'vue';
 import axios from 'axios';
+//import router from '@/config/router';
   
 const categories = ref([]);
+const sizes = ref([]);
 
 const product = reactive({
     name: '',
@@ -66,13 +75,23 @@ const removeSize = (index) => {
     }
 };
 
+const availableSizes = (currentIndex) => {
+    // Filters out the sizes stored in the product.sizes from the sizes reactive variable
+    // so that they cannot be selected again.
+    return sizes.value.filter(size => {
+        return !product.sizes.some((s, i) => i !== currentIndex && s.size === size.id);
+    });
+};
+
 const submitForm = async () => {
     try {
         if (product.categories.length > 0){
             const createProduct = await axios.post('http://localhost:3000/api/products/create', product);
             console.log(createProduct)
             if(createProduct.status == 200){
-                console.log('Product created successfully.')
+                console.log('Product created successfully.');
+                alert('product created successfully');
+                //router.push({ name: 'admin_create_product' });
             }
         } else {
             alert("Alteast one category is required.");
@@ -87,21 +106,40 @@ const fetchCategories = async () => {
     try {
         const categoriesReturned = await axios.get('http://localhost:3000/api/products/categories');
         if (categoriesReturned.data.length > 0){
-                for(let i = 0; i < categoriesReturned.data.length; i++){
-                    let category= {
-                        id: categoriesReturned.data[i].category_id,
-                        name: categoriesReturned.data[i].name
-                    }
-                    categories.value.push(category);          
+            for(let i = 0; i < categoriesReturned.data.length; i++){
+                let category= {
+                    id: categoriesReturned.data[i].category_id,
+                    name: categoriesReturned.data[i].name
                 }
+                categories.value.push(category);          
+            }
         }
     } catch (error) {
         console.error("Something went wrong while fetching categories: ", error);
     }
 };
 
+const fetchSizes = async () => {
+    try {
+        const response = await axios.get('http://localhost:3000/api/products/sizes');
+        console.log(response.data)
+        if (response.data.length > 0){
+            for(let i = 0; i < response.data.length; i++){
+                let tmp= {
+                    id: response.data[i].size_id,
+                    size: response.data[i].size
+                }
+                sizes.value.push(tmp);          
+            }
+        }
+    } catch (error) {
+        console.error("Something went wrong while fetching the sizes: ", error);
+    }
+};
+
 onMounted(async () =>{
     await fetchCategories();
+    await fetchSizes();
 });
 </script>
   

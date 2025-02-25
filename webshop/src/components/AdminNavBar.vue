@@ -3,11 +3,26 @@
       <ul>
         <li><router-link :to="{ name: 'admin_dashboard' }">Dashboard</router-link></li>
         <li><router-link :to="{ name: 'admin_products' }">Products</router-link></li>
+        <li><router-link :to="{ name: 'homepage' }">Shop</router-link></li>
+        <li><router-link @click="logout" to="#">Logout</router-link></li>
       </ul>
     </nav>
 </template>
   
 <script setup>
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const logout = async () => {
+    try {
+		await axios.get('http://localhost:3000/api/user/logout');
+		router.push('/login');
+    } catch (error) {
+		console.error("Error logging out: ", error.response.data.message);
+    }
+};
 </script>
   
 <style scoped>

@@ -12,6 +12,7 @@ import DashboardPage from "@/pages/AdminPages/DashboardPage.vue";
 import checkAuth from '../utils/auth.js';
 import ProductsPage from "@/pages/AdminPages/ProductsPage.vue";
 import CreateProductPage from "@/pages/AdminPages/CreateProductPage.vue";
+import EditProductPage from "@/pages/AdminPages/EditProductPage.vue";
 
 const routes = [
     { 
@@ -69,7 +70,13 @@ const routes = [
         name: 'admin_create_product',
         component: CreateProductPage,
         meta: { requiresAuth: true, role: 'admin' }
-    }
+    },
+    {
+        path: '/admin/products/edit/:id',
+        name: 'admin_edit_product',
+        component: EditProductPage,
+        meta: { requiresAuth:true, role: 'admin'}
+    },
     // {
     //     path: '/profile',
     //     name: 'profile',

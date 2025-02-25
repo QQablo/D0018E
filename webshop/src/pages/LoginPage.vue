@@ -53,10 +53,9 @@ const login = async () => {
     const response = await axios.post('http://localhost:3000/api/user/login', credentials);
     console.log(response.data.role);
     if(response.status == 200){
-		
 		console.log("Successful login.");
 		router.push({ name: 'homepage' });
-    } 
+	} 
   } catch (error) {
 		alert('Invalid credentials.')
 		console.log(error);

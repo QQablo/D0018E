@@ -1,46 +1,46 @@
 <template>
-  <NavigationBar />
-  <div class="order-history">
-    <h1>Order History</h1>
-    <div v-if="ordersData.length == 0">
-      <p>No orders found.</p>
-    </div>
-    <div v-else>
-      <div v-for="order in orders" :key="order.order_id" class="order-card">
-        <div class="order-header" @click="toggleOrderItems(order.order_id)">
-          <h3>Order #{{ order.order_id }}</h3>
-          <span class="arrow" :class="{'rotate': order.showItems}">&#x25BC;</span>
-        </div>
+	<NavigationBar />
+	<div class="order-history">
+		<h1>Order History</h1>
+		<div v-if="ordersData.length == 0">
+			<p>No orders found.</p>
+		</div>
+		<div v-else>
+			<div v-for="order in orders" :key="order.order_id" class="order-card">
+				<div class="order-header" @click="toggleOrderItems(order.order_id)">
+					<h3>Order #{{ order.order_id }}</h3>
+					<span class="arrow" :class="{'rotate': order.showItems}">&#x25BC;</span>
+				</div>
 
-        <div v-if="order.showItems" class="order-details">
-          <p><strong>Date:</strong> {{ new Date(order.date).toLocaleDateString() }}</p>
-          <p><strong>Total Price:</strong> ${{ order.price }}</p>
-          
-          <div class="order-items">
-            <h4>Items:</h4>
-            <table>
-              <thead>
-                <tr>
-                  <th>Product Name</th>
-                  <th>Quantity</th>
-                  <th>Size</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in order.items" :key="item.product_name">
-                  <td>{{ item.product_name }}</td>
-                  <td>{{ item.quantity }}</td>
-                  <td>{{ item.size }}</td>
-                  <td>${{ item.sub_total }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+				<div v-if="order.showItems" class="order-details">
+					<p><strong>Date:</strong> {{ new Date(order.date).toLocaleDateString() }}</p>
+					<p><strong>Total Price:</strong> ${{ order.price }}</p>
+				
+					<div class="order-items">
+						<h4>Items:</h4>
+						<table>
+							<thead>
+								<tr>
+								<th>Product Name</th>
+								<th>Quantity</th>
+								<th>Size</th>
+								<th>Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="item in order.items" :key="item.product_name">
+								<td>{{ item.product_name }}</td>
+								<td>{{ item.quantity }}</td>
+								<td>{{ item.size }}</td>
+								<td>${{ item.sub_total }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup>

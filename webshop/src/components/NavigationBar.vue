@@ -49,7 +49,7 @@ const logout = async () => {
     } catch (error) {
 		console.error("Error logging out: ", error.response.data.message);
     }
-  };
+};
 
 // eslint-disable-next-line no-undef
 defineExpose({ updateCartCounter });
