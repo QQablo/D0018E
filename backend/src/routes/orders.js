@@ -72,24 +72,27 @@ router.post('/create', async (req, res) => {
     }
 });
 
-
-router.get('/history', async(req, res) => {
-    
-    const client = await pool.connect();
-
+router.get('/history', async (req, res) => {
     try {
         if (!req.session.user) {
-            console.log('Not a logged in user. GET OUT!!!')
-            return res.status(401);
+            return res.status(401).json({ error: 'Not a logged in user!!!!' });
         }
+  
+        const { rows } = await pool.query(
+            'SELECT o.order_id, o.price, o.date, ' +
+            'oi.product_name, oi.quantity, oi.sub_total, oi.size ' +
+            'FROM orders o ' +
+            'INNER JOIN order_items oi ON o.order_id = oi.order_id ' +
+            'WHERE o.customer_id = $1 ', [req.session.user.id]);
 
-        
-
-        // TBD
-    } catch (error) {
-        
-    } finally {
-        client.release();
+        if (rows.length > 0) {
+            return res.status(200).json({ message: "Oders retrieved successfully", data: rows });
+        } else {
+            return res.status(200).json({ message: 'No orders found.', data: [] });
+        }
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ error: 'Something went wrong while retrieving order history.' });
     }
 });
 
