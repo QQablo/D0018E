@@ -70,7 +70,7 @@ const orderHistory = async () => {
 
 const processOrders = () => {
   const sortOrders = {};
-  
+
   for (let i = 0; i < ordersData.value.length; i++) {
     const orderItem = ordersData.value[i];
     const orderId = orderItem.order_id;

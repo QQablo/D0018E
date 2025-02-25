@@ -72,6 +72,7 @@ router.post('/create', async (req, res) => {
     }
 });
 
+// Returns all the oder items related to orders for a logged in user
 router.get('/history', async (req, res) => {
     try {
       if (!req.session.user) {
