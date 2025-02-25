@@ -1,13 +1,13 @@
 <template>
-  <NavigationBar />
-  <div>
-    <h1>Categories</h1>
-    <div v-for="category in categoriesData" :key="category.id">
-      <router-link :to="'/category/' + category.id">
-        <h3>{{ category.name }}</h3>
-      </router-link>
-    </div>
-  </div>
+	<NavigationBar />
+	<div>
+		<h1>Categories</h1>
+		<div v-for="category in categoriesData" :key="category.id">
+			<router-link :to="'/category/' + category.id">
+				<h3>{{ category.name }}</h3>
+			</router-link>
+		</div>
+	</div>
 </template>
 
 <script setup>
@@ -31,14 +31,13 @@ const fetchCategories = async () => {
             }
     }
     //console.log(categoriesData.value);
-
   } catch (error) {
-    console.error("Something went wrong while fetching categories:", error);
+		console.error("Something went wrong while fetching categories:", error);
   }
 };
 
 onMounted(() => {
-  fetchCategories();
+	fetchCategories();
 });
 
 </script>

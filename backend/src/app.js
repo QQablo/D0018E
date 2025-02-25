@@ -15,15 +15,15 @@ app.use(cors({
 
 
 app.use(session({
-  name: "express-session",
-  secret: 'D0018E - Databasteknik',
-  // Don't save empty sessions in the session store, i.e., when users don't do anything on the site
-  saveUninitialized: false ,
-  // Don't save the session if it hasn't been modified
-  resave: false,
-  cookie: { 
-    maxAge: 60 * 60 * 1000 // 1h
-  }
+	name: "express-session",
+	secret: 'D0018E - Databasteknik',
+	// Don't save empty sessions in the session store, i.e., when users don't do anything on the site
+	saveUninitialized: false ,
+	// Don't save the session if it hasn't been modified
+	resave: false,
+	cookie: { 
+		maxAge: 24 * 60 * 60 * 1000 // 1 day
+	}
 }));
 
 

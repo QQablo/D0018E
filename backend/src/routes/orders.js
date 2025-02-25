@@ -83,6 +83,8 @@ router.get('/history', async(req, res) => {
             return res.status(401);
         }
 
+        
+
         // TBD
     } catch (error) {
         

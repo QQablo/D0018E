@@ -83,7 +83,9 @@ router.beforeEach(async (to, from, next) => {
         const user = await checkAuth(); 
         // // console.log(user)
         // console.log("Page requires user role: " + to.meta.role);
+        console.log(user.role, '  userauth: ', user.auth);
         if(to.meta.role == user.role && user.auth){
+            
             console.log("Access to private page granted.")
             next();
         } else {

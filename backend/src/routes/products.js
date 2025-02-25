@@ -27,21 +27,21 @@ router.post('/add_review', async (req, res) => {
 router.get('/product_reviews', async (req, res) => {
   const { id: product_id } = req.query;
   try {
-    const { rows } = await pool.query(
-      'SELECT r.review_id, r.stars, r.title, r.text, ' + 
-        'u.first_name, u.last_name ' +
-       'FROM reviews r ' +
-       'INNER JOIN users u ON r.customer_id = u.user_id ' +
-       'WHERE r.product_id = $1', [product_id]
+    	const { rows } = await pool.query(
+			'SELECT r.review_id, r.stars, r.title, r.text, ' + 
+			'u.first_name, u.last_name ' +
+			'FROM reviews r ' +
+			'INNER JOIN users u ON r.customer_id = u.user_id ' +
+			'WHERE r.product_id = $1', [product_id]
     );
     if (rows.length > 0) {
-      return res.status(200).json({ message: "Reviews retrieved successfully", data: rows });
+		return res.status(200).json({ message: "Reviews retrieved successfully", data: rows });
     } else {
-      return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
+		return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
     }
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
+		console.error(err.message);
+		return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
   }
 });
 
@@ -69,8 +69,8 @@ router.get('/product_sizes', async (req, res) => {
 router.get('/products', async(req, res) => {
     try{
       const {rows} = await pool.query(
-          'SELECT  p.product_id, p.name, p.price, p.description, p.image ' +
-              'FROM products p');
+			'SELECT  p.product_id, p.name, p.price, p.description, p.image ' +
+			'FROM products p');
       //console.log(rows)
       if (rows.length > 0) { 
             console.log(req.session);
@@ -82,22 +82,21 @@ router.get('/products', async(req, res) => {
         console.error(err.message);    
         return res.status(500).json({error: 'Something went wrong while retrieving the products.'});
     }
-  });
+});
 
 // Return the id and name for all the categories.
 router.get('/categories', async(req, res) => {
     try{
-      const {rows} = await pool.query(
-          'SELECT name, category_id FROM categories');
-      //console.log(rows)
-      if (rows.length > 0) { 
-          return res.status(200).json(rows);
-      } else {
-          return res.status(404).json({error: 'Products not found.'});
-      }
+		const {rows} = await pool.query('SELECT name, category_id FROM categories');
+		//console.log(rows)
+		if (rows.length > 0) { 
+			return res.status(200).json(rows);
+		} else {
+			return res.status(404).json({error: 'Products not found.'});
+		}
     } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'});
+		console.error(err.message);
+		return res.status(500).json({error: 'Something went wrong while retrieving the products based on the category.'});
     }
   });
 
@@ -133,13 +132,13 @@ router.get('/product', async(req, res) => {
             'FROM products p WHERE p.product_id=$1', [req.query.id]);
       //console.log(rows)
       if (rows.length > 0) { 
-            return res.status(200).json({message:"Product retrieved successfully.", data: rows});
+			return res.status(200).json({message:"Product retrieved successfully.", data: rows});
       } else {
             return res.status(404).json({error: 'Product not found.'});
       }
     } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while retrieving the product.'});
+		console.error(err.message);
+		return res.status(500).json({error: 'Something went wrong while retrieving the product.'});
     }
 });
 
@@ -150,39 +149,48 @@ router.get('/product', async(req, res) => {
 router.delete('/delete_product', async(req, res) => {
     try{
       const {rows} = await pool.query(
-          'DELETE FROM products WHERE product_id=$1', [req.query.id]); 
+			'DELETE FROM products WHERE product_id=$1', [req.query.id]); 
       if (rows.length > 0) { 
-          return res.status(200).json({message:"Product deleted successfully."});
+			return res.status(200).json({message:"Product deleted successfully."});
       } else {
-          return res.status(404).json({error: 'Product not found, invalid id.'});
+			return res.status(404).json({error: 'Product not found, invalid id.'});
       }
     } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({error: 'Something went wrong while deleting the product.'});
+		console.error(err.message);
+		return res.status(500).json({error: 'Something went wrong while deleting the product.'});
     }
 });
 
  
-router.post('/create_product', async(req, res) => {
-  const { name, price, description, image } = req.body
+router.post('/create', async(req, res) => {
+	const client = await pool.connect();
   try{
-    const {rows} = await pool.query(
-        'INSERT INTO products (name, price, description, image)' + 
-        'VALUES ($1, $2, $3, $4) RETURNING product_id', [name, price, description, image]); 
-    //console.log(rows);
-    if (rows.length > 0) { 
-        return res.status(200).json({message:"Product created successfully."});
-    } else {
-        return res.status(404).json({error: 'Successful operation, but the product id was not returned.'})
-    }
+		const { name, price, description, image, sizes, categories } = req.body
+		//console.log(req.body);
+		if(!name || !price || !description || !image || !sizes || !categories){
+			return res.status(400).json("Invalid input.")
+		}
+
+		const {rows} = await pool.query(
+			'INSERT INTO products (name, price, description, image)' + 
+			'VALUES ($1, $2, $3, $4) RETURNING product_id', 
+			[name, price, description, image]); 
+		//console.log(rows);
+		if (rows.length > 0) { 
+			return res.status(200).json({message:"Product created successfully."});
+		} else {
+			return res.status(404).json({error: 'Successful operation, but the product id was not returned.'})
+		}
+		
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({error: 'Something went wrong while creating the product.'});
+		client.query('ROLLBACK');
+		console.error(err.message);
+		return res.status(500).json({error: 'Something went wrong while creating the product.'});
+  } finally {
+		client.release();
   }
 });
 
 // update product
-// set product category
-// set product size
 
 module.exports = router;
