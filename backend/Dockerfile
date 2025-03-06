@@ -15,7 +15,7 @@ COPY . .
 EXPOSE 3000
 
 # Development
-CMD ["npm", "run", "start"] 
+#CMD ["npm", "run", "start"] 
 
 # Production
-# CMD ["npm", "run", "serve"]  
+CMD ["npm", "run", "serve"]  
