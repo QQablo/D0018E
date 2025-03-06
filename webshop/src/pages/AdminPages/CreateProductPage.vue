@@ -51,7 +51,7 @@
 import AdminNavBar from '@/components/AdminNavBar.vue';
 import { reactive, ref, onMounted } from 'vue';
 import axios from 'axios';
-//import router from '@/config/router';
+import router from '@/config/router';
   
 const categories = ref([]);
 const sizes = ref([]);
@@ -87,11 +87,11 @@ const submitForm = async () => {
     try {
         if (product.categories.length > 0){
             const createProduct = await axios.post('http://localhost:3000/api/products/create', product);
-            console.log(createProduct)
+            //console.log(createProduct)
             if(createProduct.status == 200){
                 console.log('Product created successfully.');
                 alert('product created successfully');
-                //router.push({ name: 'admin_create_product' });
+                await router.push({ name: 'admin_products' });
             }
         } else {
             alert("Alteast one category is required.");

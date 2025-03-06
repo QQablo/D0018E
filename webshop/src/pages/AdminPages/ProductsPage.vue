@@ -1,7 +1,7 @@
 <template>
     <AdminNavBar />
     <div class="admin-products-page">
-        <h1>Products</h1>
+        <h1>Productss</h1>
         <div class="control-buttons">
             <select v-model="selectedCategory">
                 <option value=""></option>
@@ -29,7 +29,7 @@
                     <td>{{ product.product_id }}</td>
                     <td>{{ product.name }}</td>
                     <td>${{ product.price }}</td>
-                    <td class="edit-button-cell"> 
+                    <td class="edit-button-cell" style="width: 200px;"> 
                         <RouterLink :to="{name:'admin_edit_product', params:{id:product.product_id}}">
                             <button class="edit-button">Edit</button>
                         </RouterLink>
@@ -111,7 +111,6 @@ const deleteProduct = async (productId) => {
         console.error('Error fetching products:', error);
     }
 }
-  
 
 onMounted(async () => {
     await fetchCategories();
