@@ -4,65 +4,65 @@
     </RouterLink>
         
     <div class="checkout-page">
-      <h2>Checkout</h2>
-  
-      <form @submit.prevent="createOrder" class="form-container">
-        <div class="input-group">
-          <input
-            type="text"
-            id="firstName"
-            v-model="formData.firstName"
-            placeholder="First Name"
-            required
-          />
-        </div>
+		<h2>Checkout</h2>
 
-        <div class="input-group">
-          <input
-            type="text"
-            id="lastName"
-            v-model="formData.lastName"
-            placeholder="Last Name"
-            required
-          />
-        </div>
+		<form @submit.prevent="createOrder" class="form-container">
+			<div class="input-group">
+				<input
+				type="text"
+				id="firstName"
+				v-model="formData.firstName"
+				placeholder="First Name"
+				required
+				/>
+			</div>
 
-        <div class="input-group">
-          <input
-            type="email"
-            id="email"
-            v-model="formData.email"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
+			<div class="input-group">
+				<input
+				type="text"
+				id="lastName"
+				v-model="formData.lastName"
+				placeholder="Last Name"
+				required
+				/>
+			</div>
 
-        <div class="input-group">
-          <input
-            type="tel"
-            id="phone"
-            v-model="formData.phone"
-            placeholder="Phone Number"
-            required
-          />
-        </div>
+			<div class="input-group">
+				<input
+					type="email"
+					id="email"
+					v-model="formData.email"
+					placeholder="Enter your email"
+					required
+				/>
+			</div>
 
-        <div class="input-group">
-          <input
-            type="text"
-            id="address"
-            v-model="formData.shippingAddress"
-            placeholder="Address"
-            required
-          />
-        </div>
+			<div class="input-group">
+			<input
+				type="number"
+				id="phone"
+				v-model="formData.phone"
+				placeholder="Phone Number"
+				required
+			/>
+			</div>
 
-        <button type="submit">Simulate order</button>
-      </form>
-    <div class="order-info">
-      <p>Nr of Items: {{ itemCount }} </p>
-      <p>Total Price: {{ totalPrice }}</p>
-    </div>
+			<div class="input-group">
+			<input
+				type="text"
+				id="address"
+				v-model="formData.shippingAddress"
+				placeholder="Address"
+				required
+			/>
+			</div>
+
+			<button type="submit">Simulate order</button>
+		</form>
+		<div class="order-info">
+			<p>Nr of Items: {{ itemCount }} </p>
+			<p>Total Price: {{ totalPrice }}</p>
+		</div>
     </div>
 </template>
   
@@ -70,6 +70,7 @@
 import axios from 'axios';
 import {reactive, ref, onMounted} from 'vue';
 import { useRoute } from 'vue-router';
+import router from '@/config/router';
 
 
 const $route = useRoute();
@@ -91,12 +92,18 @@ const createOrder = async () => {
 		alert('Please fill in all fields');
 		return;
 	}
-
-	const response = await axios.post('http://localhost:3000/api/orders/create', formData);
-	if(response.status == 200){
-		console.log("Order registered");
-		console.log(response.data);
-	}
+	try {
+		const response = await axios.post('http://localhost:3000/api/orders/create', formData);
+		if(response.status == 201){
+			console.log("Order registered");
+			alert("The order was registered successfully");
+			router.push({name: "homepage"});
+		} 	
+	} catch (error) {
+		alert(error.response.data.errMessage);
+		console.log(error);
+		router.push({name: "cart"});
+	}	
 }
 
 const fetchCartCounter = async () => {

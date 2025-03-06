@@ -64,6 +64,7 @@ const fetchCartProducts = async () => {
                     totalPrice.value += parseFloat(product.subTotal);
                 }
                 console.log(cartProducts.value);
+                totalPrice.value = parseFloat(totalPrice.value.toFixed(2));
                 cartIsEmtpy.value = false;
             } 
         }else if(response.status == 204 && !cartIsEmtpy.value){ // Emtpy/Inexistent cart

@@ -1,7 +1,7 @@
 <template>
     <AdminNavBar />
     <div class="admin-products-page">
-        <h1>Products</h1>
+        <h1>Productss</h1>
         <div class="control-buttons">
             <select v-model="selectedCategory">
                 <option value=""></option>
@@ -29,8 +29,15 @@
                     <td>{{ product.product_id }}</td>
                     <td>{{ product.name }}</td>
                     <td>${{ product.price }}</td>
-                    <td class="edit-button-cell"> 
-                        <button class="edit-button">Edit</button>
+                    <td class="edit-button-cell" style="width: 200px;"> 
+                        <RouterLink :to="{name:'admin_edit_product', params:{id:product.product_id}}">
+                            <button class="edit-button">Edit</button>
+                        </RouterLink>
+                        <button 
+                        style="margin-left: 20px; 
+                        background-color: red;" 
+                        @click="deleteProduct(product.product_id)
+                        " class="edit-button">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -42,11 +49,13 @@
 import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import AdminNavBar from '@/components/AdminNavBar.vue';
+import { useRouter } from 'vue-router';
 
 
 const products = ref([]); 
 const categories = ref([]); 
 const selectedCategory = ref(''); 
+const router = useRouter();
   
 
 const fetchCategories = async () => {
@@ -89,7 +98,19 @@ watch(selectedCategory, async(newValue, oldValue) => {
     }
 
 });
-  
+
+const deleteProduct = async (productId) => {
+    try {
+        const response = await axios.delete('http://localhost:3000/api/products/delete?id='+ productId);
+        if(response.status == 200){
+            console.log('Product deleted successfully')
+            console.log(response);
+            router.go();
+        }
+    } catch (error) {
+        console.error('Error fetching products:', error);
+    }
+}
 
 onMounted(async () => {
     await fetchCategories();

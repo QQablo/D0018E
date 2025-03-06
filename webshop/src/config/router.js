@@ -8,10 +8,11 @@ import CategoryProducts from "../pages/CategoryProducts.vue";
 import ProductPage from "../pages/ProductPage.vue";
 import CartPage from "../pages/CartPage.vue";
 import CheckoutPage from "@/pages/CheckoutPage.vue";
-import DashboardPage from "@/pages/AdminPages/DashboardPage.vue";
 import checkAuth from '../utils/auth.js';
 import ProductsPage from "@/pages/AdminPages/ProductsPage.vue";
 import CreateProductPage from "@/pages/AdminPages/CreateProductPage.vue";
+import EditProductPage from "@/pages/AdminPages/EditProductPage.vue";
+import OrdersPage from "@/pages/AdminPages/OrdersPage.vue";
 
 const routes = [
     { 
@@ -53,12 +54,6 @@ const routes = [
         component: CheckoutPage,
     },
     {
-        path: '/admin/dashboard',
-        name: 'admin_dashboard',
-        component: DashboardPage,
-        meta: { requiresAuth: true, role: 'admin' }
-    },
-    {
         path: '/admin/products',
         name: 'admin_products',
         component: ProductsPage,
@@ -69,7 +64,19 @@ const routes = [
         name: 'admin_create_product',
         component: CreateProductPage,
         meta: { requiresAuth: true, role: 'admin' }
-    }
+    },
+    {
+        path: '/admin/products/edit/:id',
+        name: 'admin_edit_product',
+        component: EditProductPage,
+        meta: { requiresAuth:true, role: 'admin'}
+    },
+    {
+        path: '/admin/orders',
+        name: 'admin_orders',
+        component: OrdersPage,
+        meta: { requiresAuth:true, role: 'admin'}
+    },
     // {
     //     path: '/profile',
     //     name: 'profile',
@@ -88,7 +95,9 @@ router.beforeEach(async (to, from, next) => {
         const user = await checkAuth(); 
         // // console.log(user)
         // console.log("Page requires user role: " + to.meta.role);
+        console.log(user.role, '  userauth: ', user.auth);
         if(to.meta.role == user.role && user.auth){
+            
             console.log("Access to private page granted.")
             next();
         } else {

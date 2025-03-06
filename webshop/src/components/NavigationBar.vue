@@ -7,8 +7,7 @@
 
         <li><router-link to="/categories">Categories</router-link></li>
 		<li v-if="loggedIn && isCustomer"><router-link to="/orderhistory">Order History</router-link></li>
-		<li v-if="loggedIn && isCustomer"><router-link to="#">Profile</router-link></li>
-		<li v-if="loggedIn && isAdmin"><router-link :to="{name: 'admin_dashboard'}">Dashboard</router-link></li>
+		<li v-if="loggedIn && isAdmin"><router-link :to="{name: 'admin_products'}">Admin</router-link></li>
 		<li v-if="loggedIn"><router-link @click="logout" to="#">Logout</router-link></li>
 		<li><router-link :to="{name:'cart'}">🛍️ ({{ cartCount }})</router-link></li> 
       </ul>
@@ -49,7 +48,7 @@ const logout = async () => {
     } catch (error) {
 		console.error("Error logging out: ", error.response.data.message);
     }
-  };
+};
 
 // eslint-disable-next-line no-undef
 defineExpose({ updateCartCounter });

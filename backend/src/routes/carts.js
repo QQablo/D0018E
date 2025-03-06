@@ -116,12 +116,15 @@ router.delete('/delete', async (req, res) => {
             await client.query('BEGIN');
             await client.query( 
                 'DELETE FROM cart_items WHERE cart_item_id = $1 ' + 
-                'RETURNING (SELECT COUNT(*) - 1 FROM cart_items WHERE cart_id = $2) as cartItems', 
+                'RETURNING (SELECT COUNT(*) - 1 ' +
+                'FROM cart_items ' + 
+                'WHERE cart_id = $2) as cartItems', 
                 [req.query.cart_item_id, req.session.cart.id]
             );
 
             // Delete the cart if it has no items.
             const { rows } = await client.query('SELECT * from cart_items WHERE cart_id=$1', [req.session.cart.id]);
+
             if(rows.length == 0){
                 await client.query('DELETE FROM carts WHERE cart_id=$1', [req.session.cart.id]);
                 req.session.cart = null;
@@ -139,9 +142,8 @@ router.delete('/delete', async (req, res) => {
     } finally {
         client.release();
     }
-})
+});
 
-// test comment
 // Returns all of the items in the cart.
 router.get('/items', async (req, res) => {
     try{
@@ -150,7 +152,8 @@ router.get('/items', async (req, res) => {
                 'SELECT  c.cart_item_id, c.product_id, c.product_name, c.quantity, c.sub_total, c.size, p.image ' +
                 'FROM cart_items AS c ' +
                 'INNER JOIN products p ON c.product_id = p.product_id ' +
-                'WHERE cart_id=$1', [req.session.cart.id]
+                'WHERE cart_id=$1 ' +
+                'ORDER BY c.product_name DESC', [req.session.cart.id]
             );
 
             if (rows.length > 0){

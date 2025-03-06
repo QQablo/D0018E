@@ -1,7 +1,7 @@
 <template>
     <AdminNavBar />
     <div class="form-container">
-        <h1>Create a New Product</h1>
+        <h1>Edit Product</h1>
         <form @submit.prevent="submitForm">
             <label for="product-name">Product Name:</label>
             <input type="text" id="product-name" v-model="product.name" required />
@@ -17,10 +17,9 @@
 
             <div id="sizesContainer">
                 <h3>Sizes and Stock</h3>
-                <div v-for="(size, index) in product.sizes" :key="index" class="size-stock-row">
+                <div v-for="(size, index) in product.sizes" :key="size.size_id" class="size-stock-row">
                     <label class="size-label">Size:</label><br>
-                    <select v-model="size.size" required>
-                        <option value="" disabled>Select a size</option>
+                    <select v-model="size.size_id" required>
                         <option v-for="item in availableSizes(index)" :key="item.id" :value="item.id">
                             {{ item.size }}
                         </option>
@@ -36,32 +35,37 @@
 
             <div id="categoriesContainer">
                 <h3>Categories</h3>
-                <div v-for="category in categories" :key="category" class="categories">
+                <div v-for="category in categories" :key="category.id" class="categories">
                     <input type="checkbox" v-model="product.categories" :value="category.id" />
                     <label>{{ category.name }}</label>                    
                 </div>    
             </div>
         <br>
-        <button type="submit">Create Product</button>
+        <button type="submit">Update Product</button>
         </form>
     </div>
 </template>
-  
+
 <script setup>
 import AdminNavBar from '@/components/AdminNavBar.vue';
 import { reactive, ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useRoute } from 'vue-router';
 import router from '@/config/router';
-  
+
+const route = useRoute();
+const productId = route.params.id;
+
 const categories = ref([]);
 const sizes = ref([]);
 
 const product = reactive({
+    productId,
     name: '',
     price: 0,
     description: '',
     image: '',
-    sizes: [{ size: '', stock: 0 }], // Start with empty so that atleast 1 is required.
+    sizes: [],
     categories: [],
 });
 
@@ -70,59 +74,43 @@ const addSize = () => {
 };
 
 const removeSize = (index) => {
-    if(index != 0){
+    if (product.sizes.length > 1) {
         product.sizes.splice(index, 1);
     }
 };
 
-const availableSizes = (currentIndex) => {
-    // Filters out the sizes stored in the product.sizes from the sizes reactive variable
-    // so that they cannot be selected again.
-    return sizes.value.filter(size => {
-        return !product.sizes.some((s, i) => i !== currentIndex && s.size === size.id);
-    });
-};
-
 const submitForm = async () => {
     try {
-        if (product.categories.length > 0){
-            const createProduct = await axios.post('http://localhost:3000/api/products/create', product);
-            //console.log(createProduct)
-            if(createProduct.status == 200){
-                console.log('Product created successfully.');
-                alert('product created successfully');
+        if (product.categories.length > 0) {
+            const response = await axios.put(`http://localhost:3000/api/products/update`, product);
+            if (response.status === 200) {
+                alert('Product updated successfully');
                 await router.push({ name: 'admin_products' });
             }
         } else {
-            alert("Alteast one category is required.");
+            alert("At least one category is required.");
         }
-        
     } catch (error) {
-        console.error("Something went wrong while creating the product: ", error);
+        console.error("Error updating product:", error);
     }
 };
 
 const fetchCategories = async () => {
     try {
-        const categoriesReturned = await axios.get('http://localhost:3000/api/products/categories');
-        if (categoriesReturned.data.length > 0){
-            for(let i = 0; i < categoriesReturned.data.length; i++){
-                let category= {
-                    id: categoriesReturned.data[i].category_id,
-                    name: categoriesReturned.data[i].name
-                }
-                categories.value.push(category);          
-            }
-        }
+        const response = await axios.get('http://localhost:3000/api/products/categories');
+        categories.value = response.data.map(c => ({
+            id: c.category_id,
+            name: c.name
+        }));
     } catch (error) {
-        console.error("Something went wrong while fetching categories: ", error);
+        console.error("Error fetching categories:", error);
     }
 };
 
 const fetchSizes = async () => {
     try {
         const response = await axios.get('http://localhost:3000/api/products/sizes');
-        console.log(response.data)
+        //console.log("Sizes: ", response.data)
         if (response.data.length > 0){
             for(let i = 0; i < response.data.length; i++){
                 let tmp= {
@@ -133,16 +121,71 @@ const fetchSizes = async () => {
             }
         }
     } catch (error) {
-        console.error("Something went wrong while fetching the sizes: ", error);
+        console.error("Error fetching sizes:", error);
     }
 };
 
-onMounted(async () =>{
-    await fetchCategories();
+const availableSizes = (currentIndex) => {
+    const currentSizeId = product.sizes[currentIndex].size_id;
+    return sizes.value.filter(size => {
+        // Keep the current size or sizes not used in other rows.
+        return size.id === currentSizeId ||
+            !product.sizes.some((s, i) => i !== currentIndex && s.size_id === size.id);
+    });
+};
+
+const fetchProduct = async () => {
+    try {
+        const response = await axios.get(`http://localhost:3000/api/products/product?id=${productId}`);
+        //console.log(response.data.data);
+        if (response.status == 200) {
+            const productData = response.data.data[0];
+            product.name = productData.name;
+            product.price = productData.price;
+            product.description = productData.description;
+            product.image = productData.image;
+            //console.log(productData)
+            await fetchProductSizes();
+            await fetchProductCategories();
+        } else {
+            console.log("Could not fetch the product? Response check: ", response)
+        }
+    } catch (error) {
+        console.error("Error fetching product:", error);
+    }
+};
+
+const fetchProductSizes = async () => {
+    try {
+        console.log("Product ID", productId)
+        const response = await axios.get(`http://localhost:3000/api/products/product_sizes?id=${productId}`);
+        console.log("Current product sizes: ", response.data)
+        product.sizes.push(...response.data.data);
+        //console.log(product)
+    } catch (error) {
+        console.error("Error fetching sizes:", error);
+    }
+};
+
+const fetchProductCategories = async () => {
+    try {
+        const response = await axios.get(`http://localhost:3000/api/products/product_categories?id=${productId}`);
+        //console.log(response.data)
+        const categoryIds = response.data.data.map(c => c.category_id);
+        console.log(categoryIds);
+        product.categories.push(...categoryIds);
+    } catch (error) {
+        console.error("Error fetching sizes:", error);
+    }
+};
+
+onMounted(async () => {
+    await fetchProduct();
     await fetchSizes();
+    await fetchCategories();
 });
 </script>
-  
+
 <style scoped>
 .form-container {
     max-width: 500px;

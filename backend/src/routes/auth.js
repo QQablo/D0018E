@@ -31,8 +31,7 @@ router.post('/sign_up', async(req, res) => {
                 } else{
                     //console.log(result);
                     return res.status(500).json({error: 'Something went wrong while creating the customer account.'});
-                }
-                
+                }    
             }
         }
     } catch (err){
