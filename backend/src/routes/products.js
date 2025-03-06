@@ -6,22 +6,29 @@ const router = express.Router();
 // Adding a Review to the Database
 router.post('/add_review', async (req, res) => {
     const { product_id, stars, title, text } = req.body;
-  try {
-    const {rows} = await pool.query(
-		'INSERT INTO reviews (customer_id, product_id, stars, title, text)' +
-		'VALUES ($1, $2, $3, $4, $5) RETURNING review_id', 
-		[req.session.user.id, product_id, stars, title, text]);
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN');
+        await client.query(
+            'INSERT INTO reviews (customer_id, product_id, stars, title, text)' +
+            'VALUES ($1, $2, $3, $4, $5) RETURNING review_id', 
+            [req.session.user.id, product_id, stars, title, text]);
 
-    if (rows.length > 0) { 
-		return res.status(200).json({message:"Review added successfully."});
-	
-  } else {
-		return res.status(404).json({error: 'Failed to add review'});
-  }
-  } catch (err) {
-		console.error(err.message);
-		return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
-  }
+        // Update the has_comment value for the order item.
+        await client.query(
+            'UPDATE order_items SET has_comment = true WHERE order_item_id = $1 AND product_id = $2',
+            [req.body.order_item_id, product_id]
+        );
+
+        await client.query('COMMIT');
+        return res.status(200).json({message:"Review added successfully."});
+    } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(err.message);
+        return res.status(500).json({ error: 'Something went wrong while submitting the review.' });
+    } finally {
+        client.release();
+    }
 });
 
 // Returns all reviews for a product
@@ -43,25 +50,6 @@ router.get('/product_reviews', async (req, res) => {
   } catch (err) {
 		console.error(err.message);
 		return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
-  }
-});
-
-// Returns all the sizes for a product
-router.get('/product_sizes', async (req, res) => {
-  try {
-    const { rows } = await pool.query(
-        'SELECT s.size_id, s.size ' +
-        'FROM sizes s ' + 
-        'INNER JOIN product_sizes ps ON s.size_id = ps.size_id ' + 
-        'WHERE ps.product_id = $1', [req.query.product_id]);
-    if (rows.length > 0) {
-      return res.status(200).json({ message: "Sizes retrieved successfully", data: rows });
-    } else {
-      return res.status(404).json({ error: 'sizes not found for this product.' });
-    }
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: 'Something went wrong while retrieving the sizes.' });
   }
 });
 
@@ -274,18 +262,90 @@ router.put('/update', async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
+        await client.query(
+    		'UPDATE products SET name = $1, price = $2, description = $3, image = $4 WHERE product_id = $5',
+            [name, price, description, image, productId]
+        );
+
+        // Update sizes by first deleting the old ones and then inserting the new ones.
+        await client.query(
+            'DELETE FROM product_sizes WHERE product_id = $1',
+            [productId]
+        );
         
+        for (const size of sizes) {
+			console.log("Size: ", size)
+            await client.query(
+                'INSERT INTO product_sizes (product_id, size_id, stock) VALUES ($1, $2, $3)',
+                [productId, size.size_id, size.stock]
+            );
+        }
+		
+        // Same as for sizes -> delete and add cat.
+        await client.query(
+            'DELETE FROM product_categories WHERE product_id = $1',
+            [productId]
+        );
+        
+        for (const categoryId of categories) {
+            await client.query(
+            	'INSERT INTO product_categories (product_id, category_id) VALUES ($1, $2)',
+                [productId, categoryId]
+            );
+        }
 
         await client.query('COMMIT');
         return res.status(200).json({ message: 'Product updated successfully' });
-
     } catch (err) {
         await client.query('ROLLBACK');
         console.error(err.message);
-        return res.status(500).json({ error: 'Failed to update product' });
+        return res.status(500).json({ error: 'Something went wrong while updating the product' });
     } finally {
         client.release();
     }
+});
+
+// Returns all the sizes for a product
+router.get('/product_sizes', async (req, res) => {
+    console.log("Product id: " + req.query.id)
+	try {
+		const { rows } = await pool.query(
+			'SELECT s.size, s.size_id, ps.stock ' +
+			'FROM product_sizes AS ps ' + 
+			'INNER JOIN sizes AS s ON s.size_id = ps.size_id ' + 
+			'WHERE ps.product_id = $1',
+			[req.query.id]);
+        console.log(rows)
+		if (rows.length > 0) {
+			return res.status(200).json({ message: "Sizes retrieved successfully", data: rows });
+		} else {
+			return res.status(404).json({ error: 'sizes not found for this product.' });
+		}
+	} catch (err) {
+		console.error(err.message);
+		return res.status(500).json({ error: 'Something went wrong while retrieving the sizes.' });
+  }
+});
+
+
+// Returns all the categories assigned to a product.
+router.get('/product_categories', async (req, res) => {
+	try {
+		const { rows } = await pool.query(
+			'SELECT c.name, c.category_id ' +
+			'FROM product_categories AS pc ' + 
+			'INNER JOIN categories AS c ON c.category_id = pc.category_id ' + 
+			'WHERE pc.product_id = $1',
+			[req.query.id]);
+		if (rows.length > 0) {
+			return res.status(200).json({ message: "Sizes retrieved successfully", data: rows });
+		} else {
+			return res.status(404).json({ error: 'sizes not found for this product.' });
+		}
+	} catch (err) {
+		console.error(err.message);
+		return res.status(500).json({ error: 'Something went wrong while retrieving the sizes.' });
+  }
 });
 
 module.exports = router;

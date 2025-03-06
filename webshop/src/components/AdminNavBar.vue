@@ -1,10 +1,10 @@
 <template>
     <nav class="admin-navbar">
       <ul>
-        <li><router-link :to="{ name: 'admin_dashboard' }">Dashboard</router-link></li>
         <li><router-link :to="{ name: 'admin_products' }">Products</router-link></li>
+        <li><router-link :to="{ name: 'admin_orders' }">Orders</router-link></li>
         <li><router-link :to="{ name: 'homepage' }">Shop</router-link></li>
-        <li><router-link @click="logout" to="#">Logout</router-link></li>
+        <li><a href="#" @click="logout">Logout</a></li>
       </ul>
     </nav>
 </template>
@@ -31,7 +31,7 @@ const logout = async () => {
     width: 200px; 
     height: 100vh; 
     padding: 20px 0; 
-    position: fixed; /* Fixed position to stay on the left, */
+    position: fixed; 
     top: 0;
     left: 0;
 }
@@ -51,7 +51,7 @@ const logout = async () => {
     text-decoration: none; 
     font-size: 18px; 
     padding: 10px 20px; 
-    display: block; /* Make the entire div clickable. */
+    display: block; 
 }
 
 .admin-navbar a:hover {
@@ -59,8 +59,7 @@ const logout = async () => {
 }
 
 .admin-navbar a.router-link-active {
-    /* Mark the link for the current page. */
     background-color: #34495e; 
-    font-weight: bold; 
+	font-weight: bold; 
 }
 </style>
