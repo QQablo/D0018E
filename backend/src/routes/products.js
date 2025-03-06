@@ -53,7 +53,6 @@ router.get('/product_reviews', async (req, res) => {
   }
 });
 
-
 // Returns all available sizes.
 router.get('/sizes', async (req, res) => {
 	try {

@@ -50,7 +50,7 @@ const login = async () => {
 		email: email.value,
 		password: password.value
     }
-    const response = await axios.post('http://localhost:3000/api/user/login', credentials);
+    const response = await axios.post('user/login', credentials);
     console.log(response.data.role);
     if(response.status == 200){
 		console.log("Successful login.");

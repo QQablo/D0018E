@@ -20,7 +20,8 @@ const categoriesData = ref([]);
 
 const fetchCategories = async () => {
   try {
-    const categoryResponse = await axios.get('http://localhost:3000/api/products/categories');
+    const categoryResponse = await axios.get(`products/categories`);
+
     if (categoryResponse.data.length > 0){
             for(let i = 0; i < categoryResponse.data.length; i++){
                 let category= {

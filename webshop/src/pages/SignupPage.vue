@@ -109,7 +109,7 @@ const signup = async () => {
     }
     
     //console.log('Signing up with:', formData.firstName, formData.lastName, formData.email, formData.phone, formData.address, formData.password);
-    const response = await axios.post('http://localhost:3000/api/user/sign_up', formData);
+    const response = await axios.post('user/sign_up', formData);
     console.log(response)
     if(response.status == 201){
         console.log("User registered.");

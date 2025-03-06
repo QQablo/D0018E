@@ -114,7 +114,7 @@ const newStatus = ref('');
 
 const fetchStatuses = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/orders/status');
+        const response = await axios.get('orders/status');
         statuses.value = response.data.data;
         selectedStatus.value = statuses.value[0].statuses;
     } catch (error) {
@@ -124,7 +124,7 @@ const fetchStatuses = async () => {
 
 const fetchOrdersByStatus = async (status) => {
     try {
-        const response = await axios.get('http://localhost:3000/api/orders/order_status?status=' + status);
+        const response = await axios.get('orders/order_status?status=' + status);
         //console.log("DATA ", response.data.data);
         ordersItems.value = response.data.data;
 
@@ -172,7 +172,7 @@ const updateStatus = async (orderId) => {
         // console.log("Order id ", orderId);
         // console.log("Selected status ", newStatus.value)
         if(newStatus.value != ''){
-            const response = await axios.put('http://localhost:3000/api/orders/update_status', { orderId: orderId, newStatus: newStatus.value});
+            const response = await axios.put('orders/update_status', { orderId: orderId, newStatus: newStatus.value});
             if (response.status == 200){
                 console.log("Status updated!");
                 console.log(response.data.message);

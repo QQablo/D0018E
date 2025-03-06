@@ -30,7 +30,7 @@ const categoryData = reactive({
 const products = async () => {
     try {
       const categoryId = $route.params.id;
-      const categoryResponse = await axios.get(`http://localhost:3000/api/products/category_products?category_id=${categoryId}`);
+      const categoryResponse = await axios.get(`products/category_products?category_id=${categoryId}`);
       //console.log(categoryResponse.data);
       categoryData.products = categoryResponse.data;
       // console.log(categoryData.products)

@@ -82,7 +82,7 @@ const removeSize = (index) => {
 const submitForm = async () => {
     try {
         if (product.categories.length > 0) {
-            const response = await axios.put(`http://localhost:3000/api/products/update`, product);
+            const response = await axios.put(`products/update`, product);
             if (response.status === 200) {
                 alert('Product updated successfully');
                 await router.push({ name: 'admin_products' });
@@ -97,7 +97,7 @@ const submitForm = async () => {
 
 const fetchCategories = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/products/categories');
+        const response = await axios.get('products/categories');
         categories.value = response.data.map(c => ({
             id: c.category_id,
             name: c.name
@@ -109,7 +109,7 @@ const fetchCategories = async () => {
 
 const fetchSizes = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/products/sizes');
+        const response = await axios.get('products/sizes');
         //console.log("Sizes: ", response.data)
         if (response.data.length > 0){
             for(let i = 0; i < response.data.length; i++){
@@ -136,7 +136,7 @@ const availableSizes = (currentIndex) => {
 
 const fetchProduct = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/products/product?id=${productId}`);
+        const response = await axios.get(`products/product?id=${productId}`);
         //console.log(response.data.data);
         if (response.status == 200) {
             const productData = response.data.data[0];
@@ -158,7 +158,7 @@ const fetchProduct = async () => {
 const fetchProductSizes = async () => {
     try {
         console.log("Product ID", productId)
-        const response = await axios.get(`http://localhost:3000/api/products/product_sizes?id=${productId}`);
+        const response = await axios.get(`products/product_sizes?id=${productId}`);
         console.log("Current product sizes: ", response.data)
         product.sizes.push(...response.data.data);
         //console.log(product)
@@ -169,7 +169,7 @@ const fetchProductSizes = async () => {
 
 const fetchProductCategories = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/products/product_categories?id=${productId}`);
+        const response = await axios.get(`products/product_categories?id=${productId}`);
         //console.log(response.data)
         const categoryIds = response.data.data.map(c => c.category_id);
         console.log(categoryIds);

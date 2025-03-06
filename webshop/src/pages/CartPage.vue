@@ -40,7 +40,7 @@ const cartIsEmtpy = ref(true);
 
 const fetchCartProducts = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/cart/items');
+        const response = await axios.get('cart/items');
         //console.log(response.data);
         //console.log("1")
         if(response.status == 200){
@@ -84,7 +84,7 @@ const add = async (productId, size) => {
             product_id: productId,
             size: size
         }
-        const response = await axios.post('http://localhost:3000/api/cart/add', input);
+        const response = await axios.post('cart/add', input);
 
         if(response.status == 200){
             console.log("Added successfully", response);
@@ -104,7 +104,7 @@ const decrease = async (productId, size) => {
             product_id: productId,
             size: size
         }
-        const response = await axios.put('http://localhost:3000/api/cart/decrease', input);
+        const response = await axios.put('cart/decrease', input);
 
         if(response.status == 200){
             console.log("Decreased successfully", response);
@@ -120,7 +120,7 @@ const decrease = async (productId, size) => {
 
 const remove = async (cartItemId) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/api/cart/delete?cart_item_id=${ cartItemId }`);
+        const response = await axios.delete(`cart/delete?cart_item_id=${ cartItemId }`);
 
         if(response.status == 200){
             console.log("Deleted successfully", response);

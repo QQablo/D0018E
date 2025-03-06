@@ -89,7 +89,8 @@ const review = reactive({
 const Product = async () => {
 	const productId = $route.params.id;
 	try {
-		const productResponse = await axios.get(`http://localhost:3000/api/products/product?id=${productId}`);
+		const productResponse = await axios.get(`products/product?id=${productId}`);
+
 		if (productResponse.status == 200) {
 			console.log("Product data received.");
 			productData.List = productResponse.data.data;
@@ -103,7 +104,8 @@ const ProductSizes = async () => {
 	const productId = $route.params.id;
 	// console.log("PRODUCT ID", productId)
 	try {
-		const sizesResponse = await axios.get(`http://localhost:3000/api/products/product_sizes?id=${productId}`);
+		const sizesResponse = await axios.get(`products/product_sizes?id=${productId}`);
+
 		if (sizesResponse.status == 200) {
 			console.log("Product_sizes returned");
 			sizes.value = sizesResponse.data.data;
@@ -126,7 +128,8 @@ const addToCart = async () => {
 	}
 
 	try {
-		const response = await axios.post('http://localhost:3000/api/cart/add', args);
+		const response = await axios.post(`cart/add`, args);
+
 		// console.log(response);
 		if (response.status == 200) {
 			navbar.value.updateCartCounter();
@@ -139,7 +142,8 @@ const addToCart = async () => {
 const fetchReviews = async () => { 
 	const productId = $route.params.id;
 	try {
-		const reviewResponse = await axios.get('http://localhost:3000/api/products/product_reviews?id=' + productId);
+		const reviewResponse = await axios.get(`products/product_reviews?id=${productId}`);
+
 		if (reviewResponse.status == 200) {
 			if (reviewResponse.data.data.length == 0) {
 				console.log("There are no reviews for this product.");
@@ -163,7 +167,8 @@ const submitReview = async () => {
 		order_item_id: availableOrderItemId.value.order_item_id
 	}
 	try {
-		const response = await axios.post('http://localhost:3000/api/products/add_review', R_args);
+		const response = await axios.post(`products/add_review`, R_args);
+
 		if (response.status == 200) {
 			console.log("Review submitted successfully");
 			alert("Review submitted!")	
@@ -178,7 +183,8 @@ const submitReview = async () => {
 const customerCanWriteReview = async () => {
 	const productId = $route.params.id;
 	try {
-		const response = await axios.get('http://localhost:3000/api/orders/can_write_review?product_id=' + productId);
+		const response = await axios.get(`orders/can_write_review?product_id=${productId}`);
+
 		
 		if (response.status == 204) {
 			// Not a logged in user so do nothing.

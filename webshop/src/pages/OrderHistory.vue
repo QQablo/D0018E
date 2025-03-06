@@ -55,7 +55,7 @@ const orders = ref([]);
 
 const orderHistory = async () => {
 	try {
-		const response = await axios.get('http://localhost:3000/api/orders/history');
+		const response = await axios.get('orders/history');
 		if (response.status == 200) {
 			if (response.data.data.length == 0) {
 				console.log("No orders found.");

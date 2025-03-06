@@ -93,7 +93,7 @@ const createOrder = async () => {
 		return;
 	}
 	try {
-		const response = await axios.post('http://localhost:3000/api/orders/create', formData);
+		const response = await axios.post('orders/create', formData);
 		if(response.status == 201){
 			console.log("Order registered");
 			alert("The order was registered successfully");
@@ -108,7 +108,7 @@ const createOrder = async () => {
 
 const fetchCartCounter = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/cart/count');
+    const response = await axios.get('cart/count');
     if (response.status == 200){
 		itemCount.value = response.data.count;
     } 

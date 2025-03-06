@@ -17,7 +17,7 @@ const router = useRouter();
 
 const logout = async () => {
     try {
-		await axios.get('http://localhost:3000/api/user/logout');
+		await axios.get('user/logout');
 		router.push('/login');
     } catch (error) {
 		console.error("Error logging out: ", error.response.data.message);

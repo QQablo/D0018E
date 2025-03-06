@@ -60,7 +60,7 @@ const router = useRouter();
 
 const fetchCategories = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/products/categories');
+        const response = await axios.get('products/categories');
         //console.log(response.data);
         categories.value = response.data;
     } catch (error) {
@@ -70,7 +70,7 @@ const fetchCategories = async () => {
 
 const fetchAllProducts = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/products/products');
+        const response = await axios.get('products/products');
         products.value = response.data.data;
         //console.log(response.data.data)
     } catch (error) {
@@ -81,7 +81,7 @@ const fetchAllProducts = async () => {
 const fetchProductsByCategory = async (categoryId) => {
     try {
         // console.log('INPUT: ' + categoryId)
-        const response = await axios.get('http://localhost:3000/api/products/category_products?category_id='+ categoryId);
+        const response = await axios.get('products/category_products?category_id='+ categoryId);
         products.value = response.data;
         // console.log('Here: ' + response.data)
     } catch (error) {
@@ -101,7 +101,7 @@ watch(selectedCategory, async(newValue, oldValue) => {
 
 const deleteProduct = async (productId) => {
     try {
-        const response = await axios.delete('http://localhost:3000/api/products/delete?id='+ productId);
+        const response = await axios.delete('products/delete?id='+ productId);
         if(response.status == 200){
             console.log('Product deleted successfully')
             console.log(response);

@@ -2,15 +2,17 @@ const express = require('express');
 const session = require('express-session')
 const cors = require('cors');
 const routes = require('./routes');
+require('dotenv').config(); 
 
 const app = express();
 
 app.use(express.json()); // Parse JSON bodies from api requests 
 
-app.use(cors({
-    credentials: true, // To allow cookies
-    origin: 'http://localhost:8080' // Allow requests from this origin
-  }
+app.use(
+	cors({
+		credentials: true, // To allow cookies
+		origin: 'http://localhost:8080' // Allow requests from this origin
+	}
 )); 
 
 

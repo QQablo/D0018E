@@ -29,7 +29,7 @@ const isCustomer = ref(false);
 
 const updateCartCounter = async () => {
   try {
-    const response = await axios.get('http://localhost:3000/api/cart/count');
+    const response = await axios.get('cart/count');
     if (response.status == 200){
 		cartCount.value = response.data.count;
     } else{
@@ -42,7 +42,7 @@ const updateCartCounter = async () => {
 
 const logout = async () => {
     try {
-		await axios.get('http://localhost:3000/api/user/logout');
+		await axios.get('user/logout');
 		loggedIn.value = false;
 		router.push('/login');
     } catch (error) {

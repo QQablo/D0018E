@@ -86,7 +86,7 @@ const availableSizes = (currentIndex) => {
 const submitForm = async () => {
     try {
         if (product.categories.length > 0){
-            const createProduct = await axios.post('http://localhost:3000/api/products/create', product);
+            const createProduct = await axios.post('products/create', product);
             //console.log(createProduct)
             if(createProduct.status == 200){
                 console.log('Product created successfully.');
@@ -104,7 +104,7 @@ const submitForm = async () => {
 
 const fetchCategories = async () => {
     try {
-        const categoriesReturned = await axios.get('http://localhost:3000/api/products/categories');
+        const categoriesReturned = await axios.get('products/categories');
         if (categoriesReturned.data.length > 0){
             for(let i = 0; i < categoriesReturned.data.length; i++){
                 let category= {
@@ -121,7 +121,7 @@ const fetchCategories = async () => {
 
 const fetchSizes = async () => {
     try {
-        const response = await axios.get('http://localhost:3000/api/products/sizes');
+        const response = await axios.get('products/sizes');
         console.log(response.data)
         if (response.data.length > 0){
             for(let i = 0; i < response.data.length; i++){
