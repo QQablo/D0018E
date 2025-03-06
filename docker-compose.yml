@@ -27,14 +27,12 @@ services:
     volumes:
       - ./backend/src:/app/src
 
-  # frontend:
-  #   build: ./webshop
-  #   container_name: frontend
-  #   ports:
-  #     - 8080:8080
-  #   depends_on:
-  #     - backend
-  #   volumes:
-  #     - ./webshop/src:/app/src
-
-  # nginx:
+  frontend:
+    build: ./webshop
+    container_name: frontend
+    ports:
+      - 8080:8080
+    depends_on:
+      - backend
+    volumes:
+      - ./webshop/src:/app/src
