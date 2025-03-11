@@ -62,9 +62,9 @@ router.post('/create', async (req, res) => {
             // Might update with just a insert + select combo instead of multiple inserts, if time allows it.
             console.log(item)
             await client.query(
-                'INSERT INTO order_items (order_id, product_id, quantity, sub_total, product_name, size) ' +
-                'VALUES ($1, $2, $3, $4, $5, $6)',
-                [orderId, item.product_id, item.quantity, item.sub_total, item.product_name, item.size]
+                'INSERT INTO order_items (order_id, product_id, quantity, sub_total, product_name, size, product_price) ' +
+                'VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [orderId, item.product_id, item.quantity, item.sub_total, item.product_name, item.size, item.product_price]
             );
             
             // Update the stock for each product. 
@@ -125,7 +125,7 @@ router.get('/order_status', async (req, res) => {
         }
   
         const { rows } = await pool.query(
-            'SELECT o.*, oi.order_item_id, oi.product_name, oi.quantity, oi.sub_total, oi.size ' +
+            'SELECT o.*, oi.order_item_id, oi.product_name, oi.quantity, oi.sub_total, oi.size, oi.product_price ' +
             'FROM orders AS o ' +
             'INNER JOIN order_items AS oi ON o.order_id = oi.order_id ' +
             'WHERE o.current_status = $1 ', [req.query.status]);

@@ -84,7 +84,7 @@
                                                 <td>{{ item.product_name }}</td>
                                                 <td>{{ item.quantity }}</td>
                                                 <td>{{ item.size }}</td>
-                                                <td>${{ item.price }}</td>
+                                                <td>${{ item.product_price }}</td>
                                                 <td>${{ item.sub_total }}</td>
                                             </tr>
                                         </tbody>
@@ -146,9 +146,10 @@ const fetchOrdersByStatus = async (status) => {
                     total: item.price
                 });
             }
+            console.log("haskudhask  ", item)
             const order = ordersMap.get(orderId);
-            const { price, quantity, size, order_item_id, product_name, sub_total } = item;
-            order.items.push({ price, quantity, size, order_item_id, product_name, sub_total });
+            const { product_price, quantity, size, order_item_id, product_name, sub_total } = item;
+            order.items.push({ product_price, quantity, size, order_item_id, product_name, sub_total });
         });
         
         //console.log("Orders list ", Array.from(ordersMap.values()));

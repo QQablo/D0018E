@@ -40,6 +40,8 @@
 			<div class="input-group">
 			<input
 				type="number"
+				min="0"
+				:minlength="10"
 				id="phone"
 				v-model="formData.phone"
 				placeholder="Phone Number"

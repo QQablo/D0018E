@@ -15,7 +15,7 @@ router.post('/sign_up', async(req, res) => {
             const {rows} = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
             //console.log(rows)
             if (rows.length > 0) { // Email taken.
-                return res.status(400).json({error: 'Email already in use.' });
+                return res.status(409).json({error: 'Email already in use.' });
             } else{ // Basic validation completed -> Hash the password and register the user.
                 const hashedPassword = await bcrypt.hash(password, 10);
                 //console.log(hashedPassword)
