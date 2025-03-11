@@ -36,21 +36,60 @@ router.get('/product_reviews', async (req, res) => {
   const { id: product_id } = req.query;
   try {
     	const { rows } = await pool.query(
-			'SELECT r.review_id, r.stars, r.title, r.text, ' + 
-			'u.first_name, u.last_name ' +
+			'SELECT r.*, u.first_name, u.last_name ' +
 			'FROM reviews r ' +
 			'INNER JOIN users u ON r.customer_id = u.user_id ' +
 			'WHERE r.product_id = $1', [product_id]
-    );
-    if (rows.length > 0) {
-		return res.status(200).json({ message: "Reviews retrieved successfully", data: rows });
-    } else {
-		return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
-    }
+        );
+        if (rows.length > 0) {
+            let customerReviews = rows.filter(rev => rev.parent_review_id == null);
+            let adminReplies = rows.filter(rev => rev.parent_review_id != null);
+            // Connect replies to comments.
+            for (let i = 0; i < customerReviews.length; i++) {
+                let review = customerReviews[i];
+                // Create an empty list in the review object to store the respective replies.
+                review.replies = [];
+                // Find all the replies to the review.
+                for (let j = 0; j < adminReplies.length; j++) {
+                    let reply = adminReplies[j];
+                    if (reply.parent_review_id === review.review_id) {
+                        review.replies.push(reply);
+                    }
+                }
+            }
+            return res.status(200).json({ message: "Reviews retrieved successfully", data: customerReviews });
+        } else {
+            return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
+        }
   } catch (err) {
 		console.error(err.message);
 		return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
   }
+});
+
+// Returns all reviews for a product
+router.post('/reply_to_review', async (req, res) => {
+    if (!req.session.user || req.session.user.role != 'admin'){
+        return res.status(401);
+    }
+    const { parentReviewId, productId, comment  } = req.body;
+    try {
+        const { rows } = await pool.query(
+            'INSERT INTO reviews (customer_id, product_id, text, parent_review_id) ' +
+            'VALUES ($1, $2, $3, $4)', 
+            // Hardcoded admin id for "customer_id". Can be implemented dynamically to support also 
+            // customer reviews.
+            [10, productId, comment, parentReviewId]);
+
+      if (rows.length > 0) {
+          return res.status(200).json({ message: "Reviews retrieved successfully", data: rows });
+      } else {
+          return res.status(200).json({ message: 'No reviews found for this product.', data: [] });
+      }
+    } catch (err) {
+          console.error(err.message);
+          return res.status(500).json({ error: 'Something went wrong while retrieving the reviews.' });
+    }
 });
 
 // Returns all available sizes.
@@ -212,17 +251,6 @@ router.delete('/delete', async (req, res) => {
         if (productExists.rowCount === 0) {
             return res.status(404).json({ error: 'Product not found' });
         }
-
-        // Delete related records
-        await client.query(
-            'DELETE FROM product_sizes WHERE product_id = $1',
-            [productId]
-        );
-        
-        await client.query(
-            'DELETE FROM product_categories WHERE product_id = $1',
-            [productId]
-        );
 
         await client.query(
             'DELETE FROM products WHERE product_id = $1',

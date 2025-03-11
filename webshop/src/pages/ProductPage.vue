@@ -49,13 +49,26 @@
 
 		<!-- Display Reviews -->
 		<div class="reviews-section">
-			<h3>Customer Reviews</h3>
-			<div v-if="reviewData.List.length === 0">No reviews yet.</div>
-			<div v-for="review in reviewData.List" :key="review.review_id" class="review">
-				<h4>{{ review.title }}</h4>
+			<h2>Customer Reviews</h2>
+			<div v-if="customerReviews.List.length === 0">No reviews yet.</div>
+			<div v-for="review in customerReviews.List" :key="review.review_id" class="review">
+				<h3>{{ review.title }}</h3>
 				<p><strong>Rating:</strong> {{ review.stars }} ⭐</p>
 				<p>{{ review.text }}</p>
 				<p><em>By: {{ review.first_name }} {{ review.last_name }}</em></p>
+				<div v-if="review.replies.length > 0">
+					<div v-for="reply in review.replies" :key="reply.review_id" style="margin-left:20px">
+						<p><strong>Owner reponse</strong></p>
+						<p>{{ reply.text }}</p>
+					</div>
+				</div>
+				<form v-if="activeReplyId == review.review_id" @submit.prevent="submitReply(review.review_id)">
+					<textarea v-model="replyText" name="reply" id="rev-rep" maxlength="150"></textarea>
+					<input type="submit" class="button" value="Submit">
+				</form>
+				<button v-if="loggedIn && loggedIn.role=='admin'" @click="toggleReplyForm(review.review_id)">
+					{{ activeReplyId === review.review_id ? 'Cancel' : 'Reply' }}
+				</button>
 			</div>
 		</div>
 	</div>
@@ -75,15 +88,16 @@ const sizes = ref([]);
 const selectedSize = ref(null); 
 const navbar = ref();
 const loggedIn = ref(false);
-//const hasBoughtProduct = ref(false);
 const canWriteReview = ref(false);
-const reviewData = reactive({ List: [] });
+const customerReviews = reactive({ List: [] });
 const availableOrderItemId = ref(null);
+const activeReplyId = ref(null);
+const replyText = ref('');
 
 const review = reactive({
 	title: '',
 	text: '',
-	stars: null,
+	rating: null,
 });
 
 const Product = async () => {
@@ -143,13 +157,13 @@ const fetchReviews = async () => {
 	const productId = $route.params.id;
 	try {
 		const reviewResponse = await axios.get(`products/product_reviews?id=${productId}`);
-
+		console.log("REVIEWS FORMAT ", reviewResponse.data.data)
 		if (reviewResponse.status == 200) {
 			if (reviewResponse.data.data.length == 0) {
 				console.log("There are no reviews for this product.");
 			} else {
 				console.log("Review data received.");
-				reviewData.List = reviewResponse.data.data;
+				customerReviews.List = reviewResponse.data.data;
 			}
 		}
 	} catch (error) {
@@ -179,13 +193,44 @@ const submitReview = async () => {
 	}
 };
 
+const toggleReplyForm = (reviewId) => {
+	if (activeReplyId.value === reviewId) {
+		// Clicking on cancel clears the form and hides it.
+		activeReplyId.value = null;
+		replyText.value = '';
+	} else {
+		// Open reply form for the respective review.
+		activeReplyId.value = reviewId;
+		replyText.value = '';
+	}
+};
+
+const submitReply = async (reviewId) => {
+	try {
+		const replyArgs = {
+			parentReviewId: reviewId,
+			productId: $route.params.id,
+			comment: replyText.value
+		}
+		console.log(replyArgs)
+		const response = await axios.post('products/reply_to_review', replyArgs);
+		
+		if (response.status == 200) {
+			// console.log("Reply submitted successfully");
+			alert("Reply submitted!");
+			activeReplyId.value = null;
+			replyText.value = '';
+			await fetchReviews(); // Refresh reviews to show the new reply
+		}
+	} catch (error) {
+		console.error("Something went wrong while submitting reply:", error);
+	}
+};
 
 const customerCanWriteReview = async () => {
 	const productId = $route.params.id;
 	try {
 		const response = await axios.get(`orders/can_write_review?product_id=${productId}`);
-
-		
 		if (response.status == 204) {
 			// Not a logged in user so do nothing.
 			console.log("Cannot write review");
@@ -208,7 +253,8 @@ onMounted(async () => {
 	await Product();
 	await ProductSizes();
 	await fetchReviews();
-	loggedIn.value = await checkAuth('customer');
+	loggedIn.value = await checkAuth();
+	//console.log(loggedIn.value.role)
 	if(loggedIn.value){
 		// Check for the possibly to write reviews only if the customer is logged in.
 		await customerCanWriteReview();
@@ -266,7 +312,6 @@ onMounted(async () => {
 	color: white;
 }
 
-
 .review-section { 
 	margin: 20px auto;
 	padding: 20px;
@@ -301,7 +346,6 @@ onMounted(async () => {
 	max-width: 200px;  
 	margin: 0 auto;  
 }
-
 
 .reviews-section {
 	width: 50%;
